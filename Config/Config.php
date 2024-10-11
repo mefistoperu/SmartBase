@@ -1,16 +1,16 @@
 <?php 
 //RUTA DE APLICACION
-const BASE_URL	= "https://facturacion.smartbase.club/";
+const BASE_URL	= "http://localhost/smartbase";
 
 //ZONA HORARIA
 date_default_timezone_set('America/Lima');
 
 //DATOS DE CONEXION DE LA BASE DE DATOS
 
-  const BD_HOST   = "37.60.241.157";
-  const BD_NAME   = "smartbase";
-  const BD_USER   = "sebas";
-  const BD_PASSWORD = "nXmhFaCGPmWxRm73";
+  const BD_HOST   = "localhost";
+  const BD_NAME   = "smartdemo";
+  const BD_USER   = "smartdemo";
+  const BD_PASSWORD = "smartdemo";
   const BD_CHARSET  = "charset=utf8";
 
   const NOMBRE    = "Smart Base";
