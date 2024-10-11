@@ -1,5 +1,147 @@
 $(document).ready(function()
+	
 {
+  
+ //################CARGAR DESDE EXCEL COMPRAS##################################//
+	$('#cargarCompra').submit(function(e)
+	{
+		Swal.fire({
+				  icon: 'success',
+				  title: 'Procesando...',
+				  text: 'Espere un momento...!',
+				  
+				});
+		
+		e.preventDefault();
+		$.ajax({
+			url  :  base_url+'/assets/ajax/ajax.php',
+			type : "POST",
+			async: true,
+			data: new FormData(this),
+			contentType: false,
+			cache: false,
+			processData: false,
+
+			success: function(response)
+			{
+			 Swal.fire({
+				  icon: 'success',
+				  title: response,
+				  text: 'ok...!',
+				  
+				});
+             console.log(response);
+             //location.reload(); 
+             //window.location = base_url+'/compras';
+			},
+			error: function(response)
+			{
+             Swal.fire({
+				  icon: 'error',
+				  title: response,
+				  text: 'ok...!',
+				  
+				});
+             console.log(response);
+			}
+
+		});
+	});   
+    
+//################CARGAR DESDE EXCEL VENTAS##################################//
+	$('#cargarVenta').submit(function(e)
+	{
+		Swal.fire({
+				  icon: 'success',
+				  title: 'Procesando...',
+				  text: 'Espere un momento...!',
+				  
+				});
+		
+		e.preventDefault();
+		$.ajax({
+			url  :  base_url+'/assets/ajax/ajax.php',
+			type : "POST",
+			async: true,
+			data: new FormData(this),
+			contentType: false,
+			cache: false,
+			processData: false,
+
+			success: function(response)
+			{
+			 Swal.fire({
+				  icon: 'success',
+				  title: response,
+				  text: 'ok...!',
+				  
+				});
+             console.log(response);
+             //location.reload(); 
+			},
+			error: function(response)
+			{
+             Swal.fire({
+				  icon: 'error',
+				  title: response,
+				  text: 'ok...!',
+				  
+				});
+             console.log(response);
+			}
+
+		});
+	});   
+
+	    //##################################CREAR CONCEPTO GASTO##################################//
+	$('#addConceptoGasto').submit(function(e)
+	{
+		
+		swal.fire({
+					title: "Cargando...",
+					text: "Por favor espere",
+					imageUrl: base_url+'/Assets/js/ajax.gif',
+					showConfirmButton: false,
+					allowOutsideClick: false
+					});
+		
+		e.preventDefault();
+		$.ajax({
+			url  :  base_url+'/Assets/ajax/ajax.php',
+			type : "POST",
+			async: true,
+			data : $('#addConceptoGasto').serialize(),
+
+			success: function(response)
+			{
+			            
+             swal.fire({
+        	 icon: "success",
+        	 title: "Registro agregado con exito..!",
+        	 showConfirmButton: true,
+         	 confirmButtonText: "Cerrar"
+
+		     });
+		     console.log(response);
+            location.reload(); 
+            //window.location = 'articulos'
+			},
+			error: function(response)
+			{
+             swal.fire({
+        	 type: "error",
+        	 title: "No se pudo agregar el registro",
+        	 showConfirmButton: true,
+        	 confirmButtonText: "Cerrar"
+
+             })
+			}
+
+		});
+	});
+
+
+
 			//################################## editar datos de empresa##################################//
 	$('#datos_empresa').submit(function(e)
 	{
@@ -8,7 +150,7 @@ $(document).ready(function()
 		e.preventDefault();
 		
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			//data : $('#datos_empresa').serialize(),
@@ -42,7 +184,7 @@ $(document).ready(function()
 		e.preventDefault();
 		
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_delete_almacen').serialize(),
@@ -63,6 +205,7 @@ $(document).ready(function()
 
 		});
 	});
+
 		//################################## editar almacen##################################//
 	$('#form_almacen_editar').submit(function(e)
 	{
@@ -71,7 +214,7 @@ $(document).ready(function()
 		e.preventDefault();
 		
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_almacen_editar').serialize(),
@@ -100,7 +243,7 @@ $(document).ready(function()
 		e.preventDefault();
 		
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_almacen').serialize(),
@@ -129,7 +272,7 @@ $(document).ready(function()
 		e.preventDefault();
 		
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_serie_usuario').serialize(),
@@ -157,7 +300,7 @@ $(document).ready(function()
 		
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_series_usuario_delete').serialize(),
@@ -184,7 +327,7 @@ $(document).ready(function()
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_series_delete').serialize(),
@@ -211,7 +354,7 @@ $(document).ready(function()
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_series_update').serialize(),
@@ -238,7 +381,7 @@ $(document).ready(function()
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_series').serialize(),
@@ -265,7 +408,7 @@ $(document).ready(function()
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#update_usuario').serialize(),
@@ -292,7 +435,7 @@ $(document).ready(function()
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#delete_usuario').serialize(),
@@ -320,7 +463,7 @@ $(document).ready(function()
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax.php',
+			url  :  base_url+'/assets/ajax/ajax.php',
 			type : "POST",
 			async: true,
 			data : $('#form_usuario').serialize(),
@@ -342,6 +485,9 @@ $(document).ready(function()
 		});
 	});
 });/*fin ready*/
+
+
+	
 /****************************funciones*************************************/
 function delusuario()
 {
@@ -349,7 +495,7 @@ function delusuario()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -366,7 +512,7 @@ function ediusuario()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -386,7 +532,7 @@ function ediserie()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -406,7 +552,7 @@ function delserie()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -424,7 +570,7 @@ function delserieusuario()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -445,15 +591,42 @@ function edialmacen()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
 					return this.innerHTML;
 				}).get();
-			$('#update_id_almacen').val(arr[1]);
+			/*$('#update_id_almacen').val(arr[1]);
 			$('#update_nombre').val(arr[2]);
-			$('#update_direccion').val(arr[3]);
+			$('#update_direccion').val(arr[3]);*/
+
+			var id = arr[1];
+			var action = 'buscar_almacenx';
+			$.ajax({
+				  	url: base_url+'/assets/ajax/ajax.php',
+				  	type: "POST",
+				  	async: true,
+				  	data: {action:action,id:id},
+
+				  	success: function(response)
+				  	{
+				  		console.log(response);
+				  		var data = $.parseJSON(response);
+				  		$('#update_id_almacen').val(data.id);
+						$('#update_nombre').val(data.nombre);
+						$('#update_direccion').val(data.direccion);
+						$('#update_codlocal').val(data.codlocal);
+						
+						$('#update_ubigeo').val(data.ubigeo).attr('selected', 'selected');
+			           
+				  	},
+				  	error: function(response)
+				  	{
+				  		console.log(response);
+				  	}
+		  	 });
+
 			
 		});
 }
@@ -465,7 +638,7 @@ function delalmacen()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -477,3 +650,42 @@ function delalmacen()
 		});
 }
 
+function enviacorreo(id,cl)
+{
+	swal.fire(
+	   {
+	   	title: "Enviando Correo...",
+		text: "Por favor espere",
+		imageUrl: base_url+'/assets/js/mail_success.gif',
+		showConfirmButton: false,
+		allowOutsideClick: false
+		});
+
+	    var id = id;
+	    var cl = cl;
+	    var action = 'enviarCorreo';
+
+		$.ajax({
+		url: base_url+'/assets/ajax/ajax_correos.php',
+		type: "POST",
+	  	async: true,
+	  	data: {action:action,id:id,cl:cl},
+
+		success: function (response)
+		{ 
+			var data = $.parseJSON(response);
+			console.log(data.mensaje);
+			swal.fire({
+        	 icon: "success",
+        	 title: data.mensaje,
+        	 showConfirmButton: true,
+         	 confirmButtonText: "Cerrar"
+
+		     });
+
+		},
+		error: function (response) { console.log(response); }
+		});
+
+
+}

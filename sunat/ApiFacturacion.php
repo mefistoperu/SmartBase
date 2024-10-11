@@ -19,7 +19,7 @@ class ApiFacturacion
 
 		$resp = $objSignature->signature_xml($flg_firma, $ruta, $ruta_firma, $pass_firma);
 
-		print_r($resp);
+		//print_r($resp);
 		$hash = $resp['hash_cpe'];
 
 		//Generar el .zip

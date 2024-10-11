@@ -5,14 +5,14 @@ $(document).ready(function(){
 		$('.ajaxgif').removeClass('hide');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_articulo.php',
+			url  :  base_url+'/assets/ajax/ajax_articulo.php',
 			type : "POST",
 			async: true,
 			data : $('#form_add_articulo').serialize(),
 
 			success: function(response)
 			{
-				$('.ajaxgif').addClass('hide');
+				
 		            
              swal.fire({
         	 icon: "success",
@@ -43,14 +43,14 @@ $(document).ready(function(){
 		$('.ajaxgif').removeClass('hide');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_articulo.php',
+			url  :  base_url+'/assets/ajax/ajax_articulo.php',
 			type : "POST",
 			async: true,
 			data : $('#form_edi_articulo').serialize(),
 
 			success: function(response)
 			{
-				$('.ajaxgif').addClass('hide');
+				
 		             
              swal.fire({
         	 icon: "success",
@@ -60,7 +60,7 @@ $(document).ready(function(){
 
 		     });
 
-            window.location = '../articulos';
+            window.location = 'articulos';
 			},
 			error: function(response)
 			{
@@ -81,14 +81,14 @@ $(document).ready(function(){
 		$('.ajaxgif').removeClass('hide');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_articulo.php',
+			url  :  base_url+'/assets/ajax/ajax_articulo.php',
 			type : "POST",
 			async: true,
 			data : $('#form_del_articulo').serialize(),
 
 			success: function(response)
 			{
-				$('.ajaxgif').addClass('hide');
+				
 			$('#ModalMarcaDelete').modal('hide');
 
              location.reload(); 

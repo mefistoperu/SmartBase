@@ -4,7 +4,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header bg-dark">
-        <h5 class="modal-title" id="exampleModalLongTitle">Nueva Contribuyente</h5>
+        <h5 class="modal-title" id="exampleModalLongTitle">Nuevo Contribuyente</h5>
         <button type="button" class="close" style="color: white" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -26,17 +26,16 @@
       <select id="tipo_doc" name="tipo_doc"  class="form-control">
         <option value="1">DNI</option>
         <option value="6" selected="">RUC</option>
+        <option value="4" selected="">CARNET DE EXTRANJERIA</option>
         <option value="0">OTROS, SIN DOCUMENTO</option>
       </select>
 
           </div>
           <div class="col-sm-2">
                 <label for="">Buscar</label>
-            <button type="button" class="btn btn-primary" name="botoncito" id="botoncito"><i class="fa fa-search"></i></button>
+            <button type="button" class="btn btn-primary" name="botoncito" id="botoncito"><i class="fe fe-search"></i></button>
           </div>
-          <div class="col-sm-1">
-            <img src="<?= base_url()?>/Assets/js/ajax.gif" class="ajaxgif hide" width="100%">
-          </div>
+          
 </div>
 
       <div class="row">
@@ -50,22 +49,22 @@
       <div class="row">
           <div class="col-sm-12">
               <label for="">Dirección</label>
-            <input type="text" name="direccion" id="direccion" class="form-control" required="" onkeyup="javascript:this.value=this.value.toUpperCase();">
+            <input type="text" name="direccion" id="direccion" class="form-control" value=" " onkeyup="javascript:this.value=this.value.toUpperCase();">
           </div>
       </div>
       
 <div class="row">
   <div class="col-sm-4">
               <label for="">Distrito</label>
-            <input type="text" name="distrito" id="distrito" class="form-control" required="" onkeyup="javascript:this.value=this.value.toUpperCase();">
+            <input type="text" name="distrito" id="distrito" class="form-control" value=" " onkeyup="javascript:this.value=this.value.toUpperCase();">
           </div>
           <div class="col-sm-4">
               <label for="">Provincia</label>
-            <input type="text" name="provincia" id="provincia" class="form-control" required="" onkeyup="javascript:this.value=this.value.toUpperCase();">
+            <input type="text" name="provincia" id="provincia" class="form-control" value=" " onkeyup="javascript:this.value=this.value.toUpperCase();">
           </div>
           <div class="col-sm-4">
               <label for="">Departamento</label>
-            <input type="text" name="departamento" id="departamento" class="form-control" required="" onkeyup="javascript:this.value=this.value.toUpperCase();">
+            <input type="text" name="departamento" id="departamento" class="form-control" value=" " onkeyup="javascript:this.value=this.value.toUpperCase();">
           </div>
           
 </div>
@@ -73,7 +72,7 @@
 <div class="row">
   <div class="col-sm-12">
               <label for="">Correo</label>
-            <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" name="correo" id="correo" class="form-control" required="">
+            <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" name="correo" id="correo" class="form-control" >
           </div>
 </div>
      
@@ -108,6 +107,16 @@
       <div class="modal-body">
         <form action="" name="form_edi_cliente" id="form_edi_cliente">
       <div class="row">
+        <div class="col-sm-8">
+          <label for="">Razon Social</label>
+          <input type="text" name="update_razon" id="update_razon" required onkeyup="javascript:this.value=this.value.toUpperCase();" class="form-control">
+        </div>
+        <div class="col-sm-4">
+          <label for="">Nro Doc</label>
+          <input type="text" name="update_doc" id="update_doc" required onkeyup="javascript:this.value=this.value.toUpperCase();" class="form-control">
+        </div>
+      </div> 
+      <div class="row">
         <div class="col-sm-12">
           <label for="">Direccion</label>
           <input type="text" name="update_direccion" id="update_direccion" required onkeyup="javascript:this.value=this.value.toUpperCase();" class="form-control">
@@ -124,7 +133,7 @@
             <input type="hidden" name="update_id" id="update_id" value="">
             <input type="hidden" name="action" value="ediCliente">
             
-            <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" name="update_correo" id="update_correo" class="form-control" required="">
+            <input type="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" name="update_correo" id="update_correo" class="form-control">
           </div>
       </div>
       

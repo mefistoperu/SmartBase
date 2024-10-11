@@ -1,3 +1,4 @@
+
 <?php 
 session_start();
 $empresa = $_SESSION["id_empresa"];
@@ -12,8 +13,16 @@ $fecha_fin = $_POST['fecha_fin'];
 $usuario   = $_POST['usuario'];
 $boton  = '';
 
+if($usuario == 0)
+{
+  $query_data = "SELECT fecha FROM vw_tbl_ventas_diarias WHERE fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND idempresa = $empresa  GROUP by  fecha";
+}
+else
+{
+  $query_data = "SELECT fecha FROM vw_tbl_ventas_diarias WHERE vendedor='$usuario' and fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND idempresa = $empresa  GROUP by  fecha";
+}
 
-$query_data = "SELECT fecha FROM vw_tbl_ventas_diarias WHERE vendedor='$usuario' and fecha BETWEEN '$fecha_ini' AND '$fecha_fin'  GROUP by  fecha";
+
 $resultado_data=$connect->prepare($query_data);
 $resultado_data->execute();
 $num_reg_data=$resultado_data->rowCount();
@@ -23,7 +32,7 @@ $num_reg_data=$resultado_data->rowCount();
 <!DOCTYPE html>
 <html lang="en">
   <head>
-        <?php include 'Views/Templates/head.php' ?>
+        <?php include 'views/template/head.php' ?>
         <style>
           .not-active { 
             pointer-events: none; 
@@ -32,61 +41,80 @@ $num_reg_data=$resultado_data->rowCount();
         </style>
   </head>
 
- <body class="nav-md">
-    <div class="container body">
-      <div class="main_container">
-        <?php include 'Views/Templates/menu.php' ?>
-        <?php include 'Views/Templates/cabezote.php' ?>
+ <body class="horizontal dark  ">
+    <div class="wrapper">
+      <?php
+       if($_SESSION['perfil']=='1')
+       {
+       include 'views/template/nav.php';
+       }
+       else
+       {
+       include 'views/template/nav_ventas.php';
+       } ?>
+      <main role="main" class="main-content">      
+        
 
         <!-- page content -->
-        <div class="right_col" role="main">
-          <div class="">
-            <div class="page-title">
-              <div class="title_left">
-                <h3>Registro de Ventas</h3>
-              </div>
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            
 
-             
-            </div>
+            
 
-            <div class="clearfix"></div>
-
-            <div class="row">
-              <div class="col-md-12 col-sm-12  ">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <div class="col-sm-12">
-
-                        <form class="form-inline" method="POST">
-                        <div class="form-group mr-3 ml-3">
-                          <label for="ex3" class="col-form-label"> Fecha Inicio: </label>
-                          <input type="date" id="fecha_ini" name="fecha_ini" class="form-control" value="<?=$fecha_ini?>">
-                        </div>
-                        <div class="form-group mr-3 ml-3">
-                          <label for="ex4" class="col-form-label"> Fecha Fin: </label>
-                          <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="<?=$fecha_fin?>">
-                        </div>
-                        <div class="form-group mr-3 ml-3">
-                          <label for="ex4" class="col-form-label"> Usuario: </label>
-                          <select name="usuario" id="usuario" class="form-control" required="">
-                            <option value="">Seleccionar ...</option>
-                            <option value="1">Admin</option> 
-                            <option value="5">Ventas</option>  
-                          </select>
-                        </div>
-                        
-                        <div class="form-group">
-                          <button type="submit" class="btn btn-success">Procesar</button>
-                          <a href="<?=base_url()?>/rpt_ventas_diarias_pdf/<?=$fecha_ini?>/<?=$fecha_fin?>/<?=$usuario?>" target="_blank" class="btn btn-danger" <?=$boton?>><i class="fa fa-file-pdf-o"></i></a>
-                        </div>
-                      </form>
+            <div class="col-12">
+               <div class="row align-items-center mb-2">
+                <div class="col">
+                  <h2 class="h5 page-title">Reporte de ventas resumen </h2>
+                </div>
+                <div class="col-auto">
+                  <form class="form-inline">
+                    <div class="form-group d-none d-lg-inline">
+                      <label for="reportrange" class="sr-only">Date Ranges</label>
+                      <div id="reportrange" class="px-2 py-2 text-muted">
+                        <span class="small"></span>
+                      </div>
                     </div>
+                    <div class="form-group">
+                      <button type="button" class="btn btn-sm"><span class="fe fe-refresh-ccw fe-16 text-muted"></span></button>
+                      <button type="button" class="btn btn-sm mr-2"><span class="fe fe-filter fe-16 text-muted"></span></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <hr>
+              <div class="row my-4">
+                      <div class="col-md-12">
+                        <div class="card shadow">
+                          <div class="card-header">
 
-                   
-                    
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
+                          <form class="form-inline" method="POST">
+                                <div class="form-group mr-3 ml-3">
+                                  <label for="ex3" class="col-form-label"> Fecha Inicio: </label>
+                                  <input type="date" id="fecha_ini" name="fecha_ini" class="form-control" value="<?=$fecha_ini?>">
+                                </div>
+                                <div class="form-group mr-3 ml-3">
+                                  <label for="ex4" class="col-form-label"> Fecha Fin: </label>
+                                  <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="<?=$fecha_fin?>">
+                                </div>
+                                <div class="form-group mr-3 ml-3">
+                                  <label for="ex4" class="col-form-label"> Usuario: </label>
+                                  <select name="usuario" id="usuario" class="form-control" required="">
+                                    <option value="">Seleccionar ...</option>
+                                    <option value="1">Admin</option> 
+                                    <option value="5">Ventas</option>  
+                                    <option value="0">Todos</option>  
+                                  </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                  <button type="submit" class="btn btn-success">Procesar</button>
+                                  <a href="<?=base_url()?>/rpt_ventas_diarias_pdf/<?=$fecha_ini?>/<?=$fecha_fin?>/<?=$usuario?>" target="_blank" class="btn btn-danger" <?=$boton?>><i class="fas fa-file-pdf"></i> Generar PDF</a>
+                                </div>
+                          </form>
+                        </div>
+
+                  <div class="card-body">
                     <table id="datatable-rptvtad" class="table table-striped table-bordered  nowrap" cellspacing="0" width="100%">
                       <thead class="bg-dark" style="color: white">
                         <tr>                          
@@ -109,18 +137,44 @@ $num_reg_data=$resultado_data->rowCount();
                             
                           <?php 
                           $fecha_dia = $data['fecha'];
-                           $query_tdoc = $connect->prepare("SELECT * FROM vw_tbl_ventas_diarias WHERE vendedor='$usuario' and fecha ='$fecha_dia' ORDER BY tipocomp,serie");
+
+                          if($usuario == 0)
+                          {
+                            $query_tdoc = $connect->prepare("SELECT * FROM vw_tbl_ventas_diarias WHERE  fecha ='$fecha_dia' AND idempresa = $empresa  ORDER BY tipocomp,serie");
+
+                          }
+                          else
+                          {
+                            $query_tdoc = $connect->prepare("SELECT * FROM vw_tbl_ventas_diarias WHERE vendedor='$usuario' and fecha ='$fecha_dia' AND idempresa = $empresa  ORDER BY tipocomp,serie");
+
+                          }
+                           
                            $query_tdoc->execute();
                            
 
                            foreach($query_tdoc as $tdata)
                            {
+
+                            if($usuario == 0)
+                            {
                             $query_totales_dia = $connect->prepare("SELECT sum(if(tipocomp='07',-op_gravadas,op_gravadas)) as op_gravadas,
                             sum(if(tipocomp='07',-op_exoneradas,op_exoneradas)) as op_exoneradas,
                             sum(if(tipocomp='07',-op_inafectas,op_inafectas)) as op_inafectas,
                             sum(if(tipocomp='07',-igv,igv)) as igv,
                             sum(if(tipocomp='07',-total,total)) as total
-                            FROM vw_tbl_ventas_diarias WHERE vendedor='$usuario' and fecha = '$fecha_dia'");
+                            FROM vw_tbl_ventas_diarias WHERE  fecha = '$fecha_dia' AND idempresa = $empresa ");
+                            }
+                            else
+                            {
+                              $query_totales_dia = $connect->prepare("SELECT sum(if(tipocomp='07',-op_gravadas,op_gravadas)) as op_gravadas,
+                            sum(if(tipocomp='07',-op_exoneradas,op_exoneradas)) as op_exoneradas,
+                            sum(if(tipocomp='07',-op_inafectas,op_inafectas)) as op_inafectas,
+                            sum(if(tipocomp='07',-igv,igv)) as igv,
+                            sum(if(tipocomp='07',-total,total)) as total
+                            FROM vw_tbl_ventas_diarias WHERE vendedor='$usuario' and fecha = '$fecha_dia' AND idempresa = $empresa ");
+                            }
+
+                            
                             $query_totales_dia->execute();
                             $row_td = $query_totales_dia->fetch(PDO::FETCH_ASSOC);
 
@@ -178,11 +232,11 @@ $num_reg_data=$resultado_data->rowCount();
           </div>
         </div>
         <!-- /page content -->
-        <?php include 'Views/Templates/pie.php' ?>
+      
       </div>
     </div>
      
-      <?php include 'Views/Templates/footer.php' ?>
+      <?php include 'views/template/pie.php' ?>
     
 
       

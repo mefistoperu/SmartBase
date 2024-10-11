@@ -1,6 +1,5 @@
 <?php 
 
-
 $empresa = $_SESSION["id_empresa"];
 $hoy = date('Y-m-d');
 
@@ -19,17 +18,17 @@ $lista1=$connect->query("SELECT * FROM vw_tbl_venta_cab WHERE empresa= $empresa 
 $resultado1=$lista1->fetchAll(PDO::FETCH_OBJ);
 
 
-$query_forma = "SELECT * FROM tbl_forma_pago ORDER BY dias";
+$query_forma = "SELECT * FROM tbl_forma_pago ORDER BY tipo";
 $resultado_forma=$connect->prepare($query_forma);
 $resultado_forma->execute(); 
 $num_reg_forma=$resultado_forma->rowCount();
 
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-        <?php include 'Views/Templates/head.php' ?>
-<script type="text/javascript">
+       <?php include 'views/template/head.php' ?>
+       <script type="text/javascript">
 function ShowSelected()
 {
 /* Para obtener el valor */
@@ -53,48 +52,51 @@ var selected = combo.options[combo.selectedIndex].text;
 alert(selected);*/
 }
 </script>
+
+       <style>
+         .table-bordered th, .table-bordered td {
+                      border: 1px solid #dce4ec;
+                        border-left-width: 1px;
+                    }
+          .table-bordered {
+                border: 1px solid #d3dbe3;
+                  border-right-width: 1px;
+              }
+                    
+           </style> 
   </head>
-
- <body class="nav-sm">
-    <div class="container body">
-      <div class="main_container">
-     
-           <?php if($_SESSION["perfil"]=='1'){ include 'Views/Templates/menu.php';}
-                 else{include 'Views/Templates/menu_ventas.php';} ?>
-        <?php include 'Views/Templates/cabezote.php' ?>
+  <body class="horizontal dark  ">
+    <div class="wrapper">
+      <?php
+       if($_SESSION['perfil']=='1')
+       {
+       include 'views/template/nav.php';
+       }
+       else
+       {
+       include 'views/template/nav_ventas.php';
+       } ?>
+      
+      <main role="main" class="main-content">
       <form id="venta_nueva_nc" name="venta_nueva_nc">
-        <!-- page content -->
-        <div class="right_col" role="main">
-          <div class="">
-            <div class="page-title">
-              <div class="title_left">
-                <h3>Nueva Venta</h3>
-              </div>
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-12">
 
-             
-            </div>
-
-            <div class="clearfix"></div>
-
-            <div class="row">
-              <div class="col-md-12 col-sm-12  ">
-                <div class="x_panel">
-                  <div class="x_title">
-                   <div class="row">
-
-                    <div class="col-sm-2">
-                            <label for="">Tipo Doc:</label>
-                             <select class="form-control select2" style="width: 100%;" name="tip_cpe" id="tip_cpe" required>
-                      
-                              <option value="">Seleccionar Documento</option>
-                              <?php 
-                                      while($row_documento = $resultado_documento->fetch(PDO::FETCH_ASSOC) )
-                                 {?>
-                                  <option value="<?= $row_documento['id'] ?>"><?=$row_documento['nombre']?></option>;
-                                 <?php  } ?>
-                            </select>
-                          </div>
-                          <div class="col-sm-2">
+              <div class="row">
+                <div class="col-sm-2">
+                    <label for="">Tipo Doc:</label>
+                     <select class="form-control select2" style="width: 100%;" name="tip_cpe" id="tip_cpe" required>
+              
+                      <option value="">Seleccionar Documento</option>
+                      <?php 
+                              while($row_documento = $resultado_documento->fetch(PDO::FETCH_ASSOC) )
+                         {?>
+                          <option value="<?= $row_documento['cod'].'-'.$row_documento['id'] ?>"><?=$row_documento['nombre']?></option>;
+                         <?php  } ?>
+                    </select>
+                </div>
+                <div class="col-sm-2">
                             <label for="">Serie:</label>
                             <input type="text" class="form-control" onkeyup="javascript:this.value=this.value.toUpperCase();" maxlength="4" readonly name="serie" id="serie">
                           </div>
@@ -104,19 +106,20 @@ alert(selected);*/
                             <input type="hidden" id="vendedor" name="vendedor" value="<?= $_SESSION['id'] ?>">
                             <input type="hidden" id="empresa" name="empresa" value="<?= $_SESSION['id_empresa']?>">
                           </div>
-
-                      <div class="col-sm-2">
+                          
+                          <div class="col-sm-2">
                         <label for="">Tipo Doc Ref.</label>
                          <div class="input-group">
                           <input type="hidden" name="id_venta_ref" id="id_venta_ref">
+                          <input type="hidden" name="id_ruc" id="id_ruc">
                           <input type="hidden" id="cod_doc_ref" name="cod_doc_ref">
                           <input type="text" class="form-control" name="tip_ref" id="tip_ref" readonly>
                           <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary" onclick="documentoref()"><i class="fa fa-search"></i></button>
+                            <button type="button" class="btn btn-primary" onclick="documentoref()"><i class="fe fe-search"></i></button>
                           </span>
                         </div>
                         </div>
-                      <div class="col-sm-2">
+                        <div class="col-sm-2">
                         <label for="">Serie Doc Ref.</label>
                           <input type="text" class="form-control" id="serie_ref" name="serie_ref" readonly>
                         </div>
@@ -124,10 +127,9 @@ alert(selected);*/
                           <label for="">Num Doc Ref</label>
                             <input type="text" class="form-control" id="num_ref" name="num_ref" readonly>
                           </div>
-                     
-                   </div>
+              </div>
 
-                    <div class="row">
+              <div class="row">
                       <div class="col-sm-2">
                         <label for="">Cliente</label>
                                               
@@ -154,8 +156,6 @@ alert(selected);*/
                       </div>
                     
                     </div>
-                    <!--fin row 1-->
-
                     <div class="row">
                           <div class="col-sm-2">
                             <label for="">Fecha Emision</label>
@@ -194,21 +194,30 @@ alert(selected);*/
                           
                           
                     </div>
-                    <!--fin row2-->
+
+
+
+                 <hr>
+                      
+                    
+
+
                     <div class="clearfix">
                       <div class="row mt-3">
                         <div class="col-sm-6">
-                          <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addProdcuto"><i class="fa fa-plus-circle"></i> Agregar Producto</button>
-                          <button class="btn btn-success" type="submit" id="btnGuardar"><i class="fa fa-save"></i> Guardar</button>
+                          <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addProdcuto"><i class="fe fe-plus-circle"></i> Agregar Producto</button>
+                          <button class="btn btn-success" type="submit" id="btnGuardarNC"><i class="fe fe-save"></i> Guardar</button>
                           
-                          <a href="<?=base_url()?>/ventas" class="btn btn-danger" type="button"><i class="fa fa-close"></i> Cancelar</a>
-                          <button type="button" class="btn btn-secondary btnListar" id="btnListar"><i class="fa fa-table"></i> Listar</button>
+                          <a href="<?=base_url()?>/ventas" class="btn btn-danger" type="button"><i class="fe fe-close"></i> Cancelar</a>
+                          <button type="button" class="btn btn-secondary btnListar" id="btnListar"><i class="fe fe-table"></i> Listar</button>
                         </div>
                        
                       </div>
                     </div>
-                  </div>
-                  <div class="x_content">
+                    <hr>
+
+                    <div class="row">
+                     <div class="col-xs-12 col-sm-12 col-md-12" style="overflow: auto; position: relative;border: 0px; width: 100%; ">
                     <table id="tabla" class="table table-bordered table-striped table-condensed table-hover">
                   <thead class="bg-dark" style="color:white">
                     <tr>
@@ -216,6 +225,7 @@ alert(selected);*/
                       <th width="5%">Item</th>
                       <th>Producto</th>
                       <th width="10%">Cant.</th>
+                      <th width="10%">Uni.</th>
                       <th width="10%">Precio</th>
                       <th width="10%">Total</th>
                       
@@ -226,64 +236,68 @@ alert(selected);*/
                     </tbody>
                    <tfoot>
                     <tr>
-                      <td colspan="3"></td>
+                      <td colspan="4"></td>
                       <td>Op. Gravadas</td>
                       <td>S/.</td>
                       <td><input type="text" class="form-control text-right" name="op_g" id="op_g" value="0.00" readonly></td>
                     </tr>
                      <tr>
-                      <td colspan="3"></td>
+                      <td colspan="4"></td>
                       <td>Op. Exonerada</td>
                       <td>S/.</td>
                       <td><input type="text" class="form-control text-right" name="op_e" id="op_e" value="0.00" readonly></td>
                     </tr>
                      <tr>
-                      <td colspan="3"></td>
+                      <td colspan="4"></td>
                       <td>Op. Inafecta</td>
                       <td>S/.</td>
                       <td><input type="text" class="form-control text-right" name="op_i" id="op_i" value="0.00" readonly></td>
                     </tr>
                      <tr>
-                      <td colspan="3"></td>
+                      <td colspan="4"></td>
                       <td>I.G.V.</td>
                       <td>S/.</td>
                       <td><input type="text" class="form-control text-right" name="igv" id="igv" value="0.00" readonly></td>
                     </tr>
                      <tr>
-                      <td colspan="3"></td>
+                      <td colspan="4"></td>
                       <td>Total</td>
                       <td>S/.</td>
                       <td><input type="text" class="form-control text-right" name="total" id="total" value="0.00" readonly></td>
                     </tr>
                   </tfoot>
                 </table>
-                
+                   </div>
                   </div>
-                   
-                  
-                </div>
-                
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /page content -->
-      </form>
-        <?php include 'Views/Templates/pie.php' ?>
-      </div>
-    </div>
-    
-     <?php include 'Views/Modules/Modals/persona.php' ?>
-      <?php include 'Views/Templates/footer.php' ?>
-    <?php include 'Views/Modules/Modals/buscar_doc_ref.php' ?>
-    <?php include 'Views/Modules/Modals/articulo_venta.php' ?>
-      <script src="Assets/js/funciones_ventas.js"></script>
-    <script src="<?=media()?>/js/tablas.js"></script>
 
-      <script src="Assets/js/sunat_reniec.js"></script>
-    
+
+
+                                  
+              
+              
+             
+            </div> <!-- /.col -->
+          </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
+          
+
+
+        </form>
+      </main> <!-- main -->
+    </div> <!-- .wrapper -->
+
+          <!-- /fin modal pagos -->
+         
+      <?php include 'views/modules/modals/buscar_doc_ref.php' ?>
+      <?php include 'views/modules/modals/articulo_venta.php' ?>
+    <?php include 'views/template/pie.php' ?>
+
   
 
-      
+      <script src="<?=media()?>/js/funciones_ventas.js"></script>
+   
+
+      <script src="<?=media()?>/js/sunat_reniec.js"></script>
+
   </body>
 </html>

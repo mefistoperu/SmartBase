@@ -35,6 +35,7 @@ $num_reg_data1=$resultado_data1->rowCount();
                    
                     
                     <th align="right">Precio Compra</th>
+                    <th>Unidad</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -43,12 +44,10 @@ $num_reg_data1=$resultado_data1->rowCount();
                           <tr>
                            <td width="10%"><?php echo $row1['id'] ?></td>
                             <td><?php echo $row1['nombre'] ?></td>
-                           
-                            
-                            
-                             <td width="10%"><?php echo $row1['costo'] ?></td>
+                            <td width="10%" align="right"><?php echo $row1['costo'] ?></td>
+                            <td width="10%"><?php echo $row1['unidad'] ?></td>
                             <td width="10%">
-                              <button type="button" class="btn btn-primary rounded-circle" onclick="agregar('<?=$row1['id']?>','<?php echo $row1['nombre'] ?>','<?php echo $row1['costo'] ?>','<?php echo $row1['afectacion'] ?>','<?php echo $row1['por1'] ?>','<?php echo $row1['por2'] ?>','<?php echo $row1['precio_venta'] ?>','<?php echo $row1['precio2'] ?>')"><i class="fa fa-plus"></i></button>
+                              <button type="button" class="btn btn-primary rounded-circle" onclick="agregarc('<?=$row1['id']?>','<?php echo $row1['nombre'] ?>','<?php echo $row1['costo'] ?>','<?php echo $row1['afectacion'] ?>','<?php echo $row1['por1'] ?>','<?php echo $row1['por2'] ?>','<?php echo $row1['precio_venta'] ?>','<?php echo $row1['precio2'] ?>','<?php echo $row1['factor'] ?>')"><i class="fa fa-plus"></i></button>
                             </td>
                           </tr>
                         <?php } ?>

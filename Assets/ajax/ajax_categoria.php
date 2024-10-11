@@ -1,9 +1,10 @@
 <?php 
 
-require_once("../../Config/Config.php");
-require_once("../../Helpers/Helpers.php"); 
-require_once("../../Libraries/Conexion.php"); 
+require_once("../../config/config.php");
+require_once("../../helpers/helpers.php"); 
+require_once("../../libraries/conexion.php"); 
 session_start();
+
 
 
 //####################################CREAR CLIENTE####################################////
@@ -15,8 +16,8 @@ if($_POST['action'] == 'addCategoria')
 	
 	$empresa      = $_POST['empresa'];
 	
-   	$query=$connect->prepare("INSERT INTO tbl_categorias(nombre,empresa) VALUES (?,?);");
-	$resultado=$query->execute([$nombre,$empresa]);
+   	$query=$connect->prepare("INSERT INTO tbl_categorias(nombre,empresa,cuenta_venta,cuenta_compra) VALUES (?,?,?,?);");
+	$resultado=$query->execute([$nombre,$empresa,$_POST['cuenta_venta'],$_POST['cuenta_compra']]);
 
 
 	if($resultado)
@@ -37,8 +38,8 @@ if($_POST['action'] == 'ediCategoria')
 	$nombre = $_POST['update_nombre'];
 	$id     = $_POST['update_id'];
 
-	$query=$connect->prepare("UPDATE tbl_categorias SET nombre=? WHERE id = ?");
-	$resultado = $query->execute([$nombre,$id]);
+	$query=$connect->prepare("UPDATE tbl_categorias SET nombre=?,cuenta_venta=?,cuenta_compra=? WHERE id = ?");
+	$resultado = $query->execute([$nombre,$_POST['update_cuenta_venta'],$_POST['update_cuenta_compra'],$id]);
 
 	if($resultado)
 	{

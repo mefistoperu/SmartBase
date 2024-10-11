@@ -1,3 +1,10 @@
+<?php 
+ $query_ubigeox = "SELECT * FROM tbl_ubigeo";
+$resultado_ubigeox=$connect->prepare($query_ubigeox);
+$resultado_ubigeox->execute(); 
+$num_reg_ubigeox=$resultado_ubigeox->rowCount();
+
+ ?>
 <div id="editarAlmacen" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <form name="form_almacen_editar" id="form_almacen_editar">
@@ -21,6 +28,20 @@
             <label for="">Direccion:</label>
             <input type="text" class="form-control" name="update_direccion" id="update_direccion"  onkeyup="javascript:this.value=this.value.toUpperCase();" required="">
           </div>
+          <div class="col-sm-8">
+            <label for="">Ubigeo(distrito-provincia-departamento)*</label>
+            <select name="update_ubigeo" id="update_ubigeo" class="form-control">
+              <option value=" ">-SELECCIONAR-</option>
+              <?php foreach($resultado_ubigeox as $ubigeox) { ?>
+                <option value="<?=$ubigeox['codigo']?>"><?=strtoupper($ubigeox['distrito'].'-'.$ubigeox['provincia'].'-'.$ubigeox['departamento'])?></option>
+              <?php   } ?>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <label for="">Cod Local (ver Ficha RUC):</label>
+            <input type="text" class="form-control" name="update_codlocal" id="update_codlocal"  onkeyup="javascript:this.value=this.value.toUpperCase();" required="">
+          </div>
+
         </div>
         
       </div>

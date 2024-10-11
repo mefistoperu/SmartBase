@@ -5,7 +5,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_categoria.php',
+			url  :  base_url+'/assets/ajax/ajax_categoria.php',
 			type : "POST",
 			async: true,
 			data : $('#form_add_categoria').serialize(),
@@ -30,7 +30,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_categoria.php',
+			url  :  base_url+'/assets/ajax/ajax_categoria.php',
 			type : "POST",
 			async: true,
 			data : $('#form_edi_categoria').serialize(),
@@ -56,7 +56,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_categoria.php',
+			url  :  base_url+'/assets/ajax/ajax_categoria.php',
 			type : "POST",
 			async: true,
 			data : $('#form_del_categoria').serialize(),

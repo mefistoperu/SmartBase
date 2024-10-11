@@ -12,6 +12,7 @@
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         
       </div>
+      
   <!--=====================================
   MODAL CUERPO
   ======================================-->
@@ -24,16 +25,12 @@
            <th>Seleccionar</th>
           </tr>
         </thead>
-        <tbody>
-          <?php foreach ($resultado1 as $res2) { ?>
-            <tr>
-              <td><?php echo $res2->num_doc ?></td>
-              <td><?php echo $res2->nombre_persona ?></td>
-              
-              <td  class="text-center"><a class="btn btn-success" onclick="enviacliente('<?php echo $res2->id_persona; ?>','<?php echo $res2->num_doc; ?>','<?php echo $res2->nombre_persona; ?>','<?php echo $res2->direccion_persona; ?>');"><i class="fa fa-check"></i></a></td>
-            </tr>
-          <?php } ?>
-        </tbody>
+        <!--tbody id="detallecli">
+                      
+        </tbody-->
+
+
+        <tbody></tbody>
          
        </table>
       </div>

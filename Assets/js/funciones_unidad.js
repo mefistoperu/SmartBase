@@ -5,14 +5,14 @@ $(document).ready(function(){
 		$('.ajaxgif').removeClass('hide');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_unidad.php',
+			url  :  base_url+'/assets/ajax/ajax_unidad.php',
 			type : "POST",
 			async: true,
 			data : $('#form_add_unidad').serialize(),
 
 			success: function(response)
 			{
-				$('.ajaxgif').addClass('hide');
+				
 			$('#ModalUnidad').modal('hide');
 
              
@@ -45,14 +45,14 @@ $(document).ready(function(){
 		$('.ajaxgif').removeClass('hide');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_unidad.php',
+			url  :  base_url+'/assets/ajax/ajax_unidad.php',
 			type : "POST",
 			async: true,
 			data : $('#form_edi_unidad').serialize(),
 
 			success: function(response)
 			{
-				$('.ajaxgif').addClass('hide');
+				
 			$('#ModalUnidadEdit').modal('hide');
 
              location.reload(); 
@@ -85,14 +85,14 @@ $(document).ready(function(){
 		$('.ajaxgif').removeClass('hide');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_unidad.php',
+			url  :  base_url+'/assets/ajax/ajax_unidad.php',
 			type : "POST",
 			async: true,
 			data : $('#form_del_unidad').serialize(),
 
 			success: function(response)
 			{
-				$('.ajaxgif').addClass('hide');
+				
 			$('#ModalUnidadDelete').modal('hide');
 
              location.reload(); 

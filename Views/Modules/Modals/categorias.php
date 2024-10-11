@@ -1,5 +1,3 @@
-
-
 <!-- Modal -->
 <div class="modal fade" id="ModalCategoria" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <form action="" name="form_add_categoria" id="form_add_categoria">
@@ -23,6 +21,18 @@
             <input type="text" name="categoria" id="categoria" class="form-control" required="" onkeyup="javascript:this.value=this.value.toUpperCase();">
           </div>
 
+
+      </div>
+      <hr>
+      <div class="row mt-3">
+        <div class="col-sm-6">
+          <label for="">Cuenta Compra</label>
+          <input type="text" class="form-control text-right" maxlength="7" minlength="5" name="cuenta_compra" id="cuenta_compra">
+        </div>
+        <div class="col-sm-6">
+          <label for="">Cuenta Venta</label>
+          <input type="text" class="form-control text-right" maxlength="7" minlength="5" name="cuenta_venta" id="cuenta_venta">
+       </div>
       </div>
    
 </div> 
@@ -61,6 +71,17 @@
             <input type="hidden" name="action" value="ediCategoria">
             <input type="text"  name="update_nombre" id="update_nombre" class="form-control" required="" onkeyup="javascript:this.value=this.value.toUpperCase();">
           </div>
+      </div>
+      <hr>
+      <div class="row mt-3">
+        <div class="col-sm-6">
+          <label for="">Cuenta Compra</label>
+          <input type="text" class="form-control text-right" maxlength="7" minlength="5" name="update_cuenta_compra" id="update_cuenta_compra">
+        </div>
+        <div class="col-sm-6">
+          <label for="">Cuenta Venta</label>
+          <input type="text" class="form-control text-right" maxlength="7" minlength="5" name="update_cuenta_venta" id="update_cuenta_venta">
+       </div>
       </div>
       
     <div class="modal-footer mt-3">

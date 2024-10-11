@@ -1,52 +1,90 @@
+function ediproducto()
 
-$(document).ready(function(){
-	$(document).on('click', '.edit', function(){
-		var id=$(this).val();
-		var nombre=$('#nombre'+id).text();
-		var descripcion=$('#descripcion'+id).text();
-		var afectacion=$('#afectacion'+id).text();
-		var idmarca=$('#idmarca'+id).text();
-		var unidad=$('#unidad'+id).text();		
-		var preciov=$('#precio_venta'+id).text();
-		var preciov2=$('#precio_venta2'+id).text();
+{
+	$('#edit').modal('show');
 
-		var costo=$('#costo'+id).text();
-		var factor=$('#factor'+id).text();
-		var por1=$('#factor'+id).text();
-		var por1=$('#por1'+id).text();
-		var por2=$('#por2'+id).text();
+	var arr = [];
 
+	$('#datatable-producto > tbody > tr').click(function()
+		{
+			arr = $(this).find('td').map(function()
+				{
+					return this.innerHTML;
+				}).get();
+			/*$('#update_id').val(arr[1]);
+			$('#update_nombre').val(arr[2]);
+			$('#update_codigo').val(arr[3]);*/
 
-	
-		$('#edit').modal('show');
-		$('#update_id').val(id);
-		$('#update_nombre').val(nombre);
-		$('#update_descripcion').val(descripcion);
-		$('#update_precio_venta').val(preciov);
-		$('#update_precio_venta2').val(preciov2);
-		$('#update_por_gan1').val(por1);
-		$('#update_por_gan2').val(por2);
+			var id = arr[2];
+			
+			var action = 'buscar_productox';
+              $.ajax({
+	  	url: base_url+'/assets/ajax/ajax_producto.php',
+	  	type: "POST",
+	  	async: true,
+	  	data: {action:action,id:id},
 
-		$('#update_precio_compra').val(costo);
+	  	success: function(response)
+	  	{
+	  		console.log(response);
+	  		var data = $.parseJSON(response);
+	  		$('#update_id').val(data.id);
+			$('#update_nombre').val(data.nombre);
+			$('#update_descripcion').val(data.descripcion);
+			$('#update_precio_venta').val(data.precio_venta);
+			$('#update_precio_venta2').val(data.precio2);
+			$('#update_por_gan1').val(data.por1);
+			$('#update_por_gan2').val(data.por2);
 
-		$('#update_factor').val(factor);
+			$('#update_precio_compra').val(data.costo);
 
-		$('#update_marca').val(idmarca).attr('selected', 'selected');
-		$('#update_unidad').val(unidad).attr('selected', 'selected');
-		$('#update_afectacion').val(afectacion).attr('selected', 'selected');
-	});
+			$('#update_factor').val(data.factor);
 
+			$('#update_cod_barras').val(data.sku);
+		    $('#update_last_imagen').val(data.imagen);
 
+			$('#update_dventa').val(data.venta);
+			$('#update_stock1').val(data.stock);
 
-	$(document).on('click', '.delete', function(){
-		var id=$(this).val();
+             img = data.imagen;
+			$('#update_marca').val(data.marca).attr('selected', 'selected');
+            $('#update_categoria').val(data.categoria).attr('selected', 'selected');
+
+			$('#update_unidad').val(data.unidad).attr('selected', 'selected');
+			$('#update_afectacion').val(data.afectacion).attr('selected', 'selected');
+
 		
+
+		 $("#img1").attr("src",base_url+"/assets/images/products/"+img);		
+	  		 
+	  		 //location.reload(); 
+	  	},
+	  	error: function(response)
+	  	{
+	  		console.log(response);
+	  	}
+	  					});
+
+		});
 	
-		$('#deleteProducto').modal('show');
-		$('#delete_id').val(id);
-		
-	});
-});
+}
+
+function delproducto()
+{
+	$('#deleteProducto').modal('show');
+
+	var arr = [];
+
+	$('#datatable-producto > tbody > tr').click(function()
+		{
+			arr = $(this).find('td').map(function()
+				{
+					return this.innerHTML;
+				}).get();
+			$('#delete_id').val(arr[2]);
+			
+		});
+}
 
 
 function calcula_costo()

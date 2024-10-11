@@ -1,3 +1,12 @@
+<?php 
+$empresa = $_SESSION["id_empresa"];
+$query_ubigeo = "SELECT * FROM tbl_ubigeo";
+$resultado_ubigeo=$connect->prepare($query_ubigeo);
+$resultado_ubigeo->execute(); 
+$num_reg_ubigeo=$resultado_ubigeo->rowCount();
+
+?>
+
 <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <form name="form_almacen" id="form_almacen">
@@ -21,6 +30,21 @@
             <label for="">Direccion:</label>
             <input type="text" class="form-control" name="direccion" id="direccion"  onkeyup="javascript:this.value=this.value.toUpperCase();" required="">
           </div>
+         
+        <div class="col-sm-8">
+            <label for="">Ubigeo(distrito-provincia-departamento)*</label>
+            <select name="ubigeo" id="ubigeo" class="from-control select2">
+              <option value=" ">-SELECCIONAR-</option>
+              <?php foreach($resultado_ubigeo as $ubigeo) { ?>
+                <option value="<?=$ubigeo['codigo']?>"><?=strtoupper($ubigeo['distrito'].'-'.$ubigeo['provincia'].'-'.$ubigeo['departamento'])?></option>
+              <?php   } ?>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <label for="">Cod Local (ver Ficha RUC):</label>
+            <input type="text" class="form-control" name="codlocal" id="codlocal"  onkeyup="javascript:this.value=this.value.toUpperCase();" required="">
+          </div>
+     
         </div>
         
       </div>

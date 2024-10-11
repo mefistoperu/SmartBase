@@ -5,15 +5,19 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_receta.php',
+			url  :  base_url+'/assets/ajax/ajax_receta.php',
 			type : "POST",
 			async: true,
 			data : $('#form_receta').serialize(),
 
 			success: function(response)
 			{
-			 $('#cargando').modal('hide');
-             $('#exito').modal('show'); 
+			 Swal.fire({
+				  icon: 'success',
+				  title: 'Procesado Correctament...',
+				  text: 'Exito...!',
+				  
+				});
              console.log(response);
              location.reload(); 
 			},
@@ -32,7 +36,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_receta.php',
+			url  :  base_url+'/assets/ajax/ajax_receta.php',
 			type : "POST",
 			async: true,
 			data : $('#form_delete_receta').serialize(),

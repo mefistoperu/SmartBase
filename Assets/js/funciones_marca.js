@@ -6,7 +6,7 @@ $(document).ready(function(){
 		
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_marca.php',
+			url  :  base_url+'/assets/ajax/ajax_marca.php',
 			type : "POST",
 			async: true,
 			data : $('#form_add_marca').serialize(),
@@ -33,7 +33,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_marca.php',
+			url  :  base_url+'/assets/ajax/ajax_marca.php',
 			type : "POST",
 			async: true,
 			data : $('#form_edi_marca').serialize(),
@@ -61,7 +61,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_marca.php',
+			url  :  base_url+'/assets/ajax/ajax_marca.php',
 			type : "POST",
 			async: true,
 			data : $('#form_del_marca').serialize(),

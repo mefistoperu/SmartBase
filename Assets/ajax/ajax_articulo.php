@@ -1,8 +1,8 @@
 <?php 
 
-require_once("../../Config/Config.php");
-require_once("../../Helpers/Helpers.php"); 
-require_once("../../Libraries/Core/Conexion.php"); 
+require_once("../../config/config.php");
+require_once("../../helpers/helpers.php"); 
+require_once("../../libraries/conexion.php"); 
 session_start();
 
 //####################################CREAR CLIENTE####################################////
@@ -23,7 +23,7 @@ if($_POST['action'] == 'addArticulo')
 
 
     	$query=$connect->prepare("INSERT INTO tbl_articulo(nombre_articulo,descripcion_articulo,categoria,marca,unidad,precio_venta,precio_compra,afectacion) VALUES (?,?,?,?,?,?,?,?);");
-		$resultado=$query->execute([$nombre,$descripcion,$categoria,$marca,$unidad,$precio_venta,$precio_compra,$afectacion,]);
+		$resultado=$query->execute([$nombre,$descripcion,$categoria,$marca,$unidad,$precio_venta,$precio_compra,$afectacion]);
 
 
 	if($resultado)

@@ -2,10 +2,10 @@
 
 session_start();
 
-require_once 'Assets/dompdf/lib/html5lib/Parser.php';
-require_once 'Assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
-require_once 'Assets/dompdf/lib/php-svg-lib/src/autoload.php';
-require_once 'Assets/dompdf/src/Autoloader.php';
+require_once 'assets/dompdf/lib/html5lib/Parser.php';
+require_once 'assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
+require_once 'assets/dompdf/lib/php-svg-lib/src/autoload.php';
+require_once 'assets/dompdf/src/Autoloader.php';
 Dompdf\Autoloader::register();
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -34,7 +34,7 @@ ON p.fdp = f.id_fdp WHERE id_venta='$factura'");
 $query_pago->execute();
 $resultado_pago = $query_pago->fetchAll(PDO::FETCH_OBJ);*/
 $numero = $row_cabecera['total'];
-include 'Assets/ajax/numeros.php';
+include 'assets/ajax/numeros.php';
 $texto=convertir($numero);
 
 
@@ -47,15 +47,15 @@ $texto=convertir($numero);
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300&display=swap" rel="stylesheet"> 
 
-   <link rel="stylesheet" href="Assets/vendors/printjs/print.min.css">
-   <script src="Assets/vendors/jquery/dist/jquery.js"></script>
-   <script src="Assets/vendors/printjs/print.min.js"></script>
+   <link rel="stylesheet" href="assets/vendors/printjs/print.min.css">
+   <script src="assets/vendors/jquery/dist/jquery.js"></script>
+   <script src="assets/vendors/printjs/print.min.js"></script>
 
    <style>
 .zona_impresion{
    position: absolute;
    box-sizing: border-box;
-width: 100%;
+width: 80mm;
    -webkit-box-shadow: 7px 6px 21px -2px rgba(0,0,0,0.58);
 -moz-box-shadow: 7px 6px 21px -2px rgba(0,0,0,0.58);
 box-shadow: 7px 6px 21px -2px rgba(0,0,0,0.58);
@@ -201,10 +201,10 @@ box-shadow: 7px 6px 21px -2px rgba(0,0,0,0.58);
          <td align="left" colspan="4"><?= strtoupper($row_detalle->descripcion) ?></td>
    </tr>
    <tr>
-         <td align="left" ><?= strtoupper($row_detalle->cantidad) ?></td>
-         <td align="center" ><?= strtoupper($row_detalle->valor_unitario) ?></td>
-         <td align="center" ><?= strtoupper($row_detalle->precio_unitario) ?></td>
-         <td align="right" ><?= strtoupper($row_detalle->valor_unitario*$row_detalle->cantidad) ?></td>
+         <td align="left" ><?= number_format($row_detalle->cantidad,2,'.',',') ?></td>
+         <td align="center" ><?= number_format($row_detalle->precio_unitario,2,'.',',') ?></td>
+         <td align="center" ><?= number_format($row_detalle->precio_unitario,2,'.',',') ?></td>
+         <td align="right" ><?= number_format($row_detalle->precio_unitario*$row_detalle->cantidad,2,'.',',') ?></td>
    </tr>    
  <?php } ?>
       </tbody>
@@ -216,23 +216,23 @@ box-shadow: 7px 6px 21px -2px rgba(0,0,0,0.58);
          </tr>
           <tr>
              <td>Op. Gravada</td>
-             <td align="right"><?= $row_cabecera['op_gravadas'] ?></td>
+             <td align="right"><?= number_format($row_cabecera['op_gravadas'],2,'.',',') ?></td>
           </tr>
           <tr>
              <td>Op. Exonerada</td>
-             <td align="right"><?= $row_cabecera['op_exoneradas'] ?></td>
+             <td align="right"><?= number_format($row_cabecera['op_exoneradas'],2,'.',',') ?></td>
           </tr>
           <tr>
              <td>Op. Inafecta</td>
-             <td align="right"><?= $row_cabecera['op_inafectas'] ?></td>
+             <td align="right"><?= number_format($row_cabecera['op_inafectas'],2,'.',',') ?></td>
           </tr>
           <tr>
              <td>I.G.V.</td>
-             <td align="right"><?= $row_cabecera['igv'] ?></td>
+             <td align="right"><?= number_format($row_cabecera['igv'],2,'.',',') ?></td>
           </tr>
           <tr>
              <td>Total</td>
-             <td align="right"><?= $row_cabecera['total'] ?></td>
+             <td align="right"><?= number_format($row_cabecera['total'],2,'.',',') ?></td>
           </tr>
  </thead>
     </table>

@@ -1,7 +1,37 @@
 <?php 
+       $hoy = date('Y-m-d');
         
         $mes = date('m');
         
+      
+
+        $sql_empresas="SELECT * FROM tbl_empresas WHERE id_empresa = $_SESSION[id_empresa]";
+        $resultado_empresas=$connect->prepare($sql_empresas);
+        $resultado_empresas->execute();
+        $row_empresas = $resultado_empresas->fetch(PDO::FETCH_ASSOC);
+
+        $top1 = $row_empresas['top1'];
+        $top2 = $row_empresas['top2'];
+
+        $fecha_certificado = $row_empresas['fecha_certificado'];
+
+        if($hoy>$fecha_certificado)
+        {
+          $estado_certificado = 'Cerificado Vencido';
+
+       
+        }
+        else
+        {
+          $estado_certificado = 'Cerificado Activo';
+        }
+
+
+        $sql_almacenes="SELECT * FROM tbl_almacen WHERE empresa = $_SESSION[id_empresa]";
+        $resultado_almacenes=$connect->prepare($sql_almacenes);
+        $resultado_almacenes->execute();
+        $num_reg_almacenes=$resultado_almacenes->rowCount();
+
         $sql_productos="SELECT * FROM tbl_productos WHERE empresa = $_SESSION[id_empresa]";
         $resultado_productos=$connect->prepare($sql_productos);
         $resultado_productos->execute();
@@ -14,28 +44,30 @@
         $num_reg_contribuyente=$resultado_contribuyente->rowCount();
 
         
-        $sql_facturas="SELECT * FROM tbl_venta_cab where tipocomp ='01' AND MONTH(fecha_emision)='$mes' AND idempresa = $_SESSION[id_empresa]";
+        $sql_facturas="SELECT * FROM tbl_venta_cab where tipocomp ='01' AND fecha_emision='$hoy' AND idempresa = $_SESSION[id_empresa]";
         $resultado_facturas=$connect->prepare($sql_facturas);
         $resultado_facturas->execute();
         $num_reg_facturas=$resultado_facturas->rowCount();
 
-        $sql_boletas="SELECT * FROM tbl_venta_cab where tipocomp ='03' AND MONTH(fecha_emision)='$mes' AND idempresa = $_SESSION[id_empresa]";
+        $sql_boletas="SELECT * FROM tbl_venta_cab where tipocomp ='03' AND fecha_emision='$hoy' AND idempresa = $_SESSION[id_empresa]";
         $resultado_boletas=$connect->prepare($sql_boletas);
         $resultado_boletas->execute();
         $num_reg_boletas=$resultado_boletas->rowCount();
 
-        $sql_nc="SELECT * FROM tbl_venta_cab where tipocomp ='07' AND MONTH(fecha_emision)='$mes' AND idempresa = $_SESSION[id_empresa]";
+        $sql_nc="SELECT * FROM tbl_venta_cab where tipocomp ='99' AND fecha_emision='$hoy' AND idempresa = $_SESSION[id_empresa]";
         $resultado_nc=$connect->prepare($sql_nc);
         $resultado_nc->execute();
         $num_reg_nc=$resultado_nc->rowCount();
 
     
 
-        $query_ventas = "SELECT sum(total) as total_ventas FROM tbl_venta_cab  WHERE idempresa =$_SESSION[id_empresa]";
+        $query_ventas = "SELECT sum(total) as total_ventas FROM tbl_venta_cab  WHERE fecha_emision='$hoy' AND idempresa =$_SESSION[id_empresa] and vendedor = $_SESSION[id]";
         $resultado_ventas = $connect->prepare($query_ventas);
         $resultado_ventas->execute();
         $row_ventas = $resultado_ventas->fetch(PDO::FETCH_ASSOC);
         $ventas = $row_ventas['total_ventas'];
+        
+        /*top de producto y clientes*/
 
         $query_productos_top = "SELECT  d.idproducto,p.nombre,sum(d.cantidad) as cantidad,c.idempresa FROM tbl_venta_det
                             as d LEFT JOIN tbl_productos as p
@@ -45,7 +77,7 @@
                             where c.idempresa =$_SESSION[id_empresa]
                             GROUP BY d.idproducto,p.nombre
                             ORDER BY sum(d.cantidad) DESC 
-                            limit 5";
+                            limit $top1";
         $resultado_productos_top=$connect->prepare($query_productos_top);
         $resultado_productos_top->execute();
         $num_reg_productos_top=$resultado_productos_top->rowCount();   
@@ -54,125 +86,238 @@
         $query_clientes_top = "SELECT  x.id_persona as id,x.nombre_persona as nombre,x.num_doc,sum(c.total) as total, x.empresa
                                 FROM tbl_venta_cab as c 
                                 LEFT JOIN tbl_contribuyente as x
-                                ON c.codcliente = x.num_doc
+                                ON c.idcliente = x.id_persona
                                 WHERE x.empresa=$_SESSION[id_empresa]
                                 GROUP BY x.id_persona,x.nombre_persona,x.num_doc
                                 ORDER BY sum(c.total) desc
-                                LIMIT 5
-                                ";
+                                LIMIT $top2";
         $resultado_clientes_top=$connect->prepare($query_clientes_top);
         $resultado_clientes_top->execute();
         $num_reg_clientes_top=$resultado_clientes_top->rowCount();   
 
 
-
-
-
-
-      
-
  ?>
 
 <!DOCTYPE html>
 <html lang="en">
-  <head> 
-      <?php include 'Views/Templates/head.php' ?>
+  <head>
+       <?php include 'views/template/head.php' ?>
+      
   </head>
+  <body class="horizontal dark  ">
+    <div class="wrapper">
 
-  <body class="nav-md">
-    <div class="container body">
-      <div class="main_container">
-       
-
-           <?php if($_SESSION["perfil"]=='1'){ include 'Views/Templates/menu.php';}
-                 else{include 'Views/Templates/menu_ventas.php';} ?>
-
-           <?php include 'Views/Templates/cabezote.php' ?>
-        
-
-        <!-- page content -->
-       <div class="right_col" role="main" style="min-height: 1284px; background-color: white;">
-          <div class="">
-            <br>
-
-            <div class="clearfix"></div>
-
-            <div class="row">
-              <div class="col-md-12">
-                <div class="">
-                  <div class="x_content">
-                    <div class="row">
-                        <div class="animated flipInY col-lg-4 col-sm-6 col-md-6 col-xs-6 ">
-                          <div class="tile-stats  bg-danger">
-                            <div class="icon"><i class="fa fa-users" style="color: white"></i>
-                            </div>
-                            <div class="count" style="color: white"><?=$num_reg_contribuyente?></div>
-
-                            <h3 style="color: white">Contribuyente</h3>
-                            <p><a href="#" style="color: white">Listado de contribuyentes</a></p>
-                            
-                          </div>
-                        </div>
-                        <div class="animated flipInY col-lg-4 col-sm-6 col-md-6 col-xs-6">
-                          <div class="tile-stats bg-primary">
-                            <div class="icon"><i class="fa fa-file" style="color: white"></i>
-                            </div>
-                            <div class="count" style="color: white"><?=$num_reg_facturas?></div>
-
-                            <h3 style="color: white">Facturas</h3>
-                            <p><a href="#" style="color: white">Listado de Comprobantes</a></p>
-                          </div>
-                        </div>
-                        <div class="animated flipInY col-lg-4 col-sm-6 col-md-6 col-xs-6">
-                          <div class="tile-stats bg-success">
-                            <div class="icon"><i class="fa fa-file" style="color: white"></i>
-                            </div>
-                            <div class="count" style="color: white"><?=$num_reg_boletas?></div>
-
-                            <h3 style="color: white">Boletas de Venta</h3>
-                            <p><a href="#" style="color: white">Listado de Comprobantes</a></p>
-                          </div>
-                        </div>
-                        <div class="animated flipInY col-lg-4 col-sm-6 col-md-6 col-xs-6">
-                                <div class="tile-stats bg-orange">
-                                  <div class="icon"><i class="fa fa-money " style="color: white"></i>
-                                  </div>
-                                  <div class="count" style="color: white"><?=number_format($ventas,2,'.',',')?></div>
-
-                                  <h3 style="color: white">Total Ventas</h3>
-                                  <p><a href="#" style="color: white">Listado de Ventas</a></p>
-                                </div>
-                        </div>
-                        <div class="animated flipInY col-lg-4 col-sm-6 col-md-6 col-xs-6">
-                                  <div class="tile-stats bg-secondary">
-                                    <div class="icon"><i class="fa fa-file " style="color: white"></i>
-                                    </div>
-                                    <div class="count" style="color: white"><?=$num_reg_boletas?></div>
-
-                                    <h3 style="color: white">Notas de Credito</h3>
-                                    <p><a href="#" style="color: white">Listado de Comprobantes</a></p>
-                                  </div>
-                        </div>
-                        <div class="animated flipInY col-lg-4 col-sm-6 col-md-6 col-xs-6">
-                                  <div class="tile-stats bg-purple">
-                                    <div class="icon"><i class="fa fa-product-hunt " style="color: white"></i>
-                                    </div>
-                                    <div class="count" style="color: white"><?=$num_reg_productos?></div>
-
-                                    <h3 style="color: white">Productos</h3>
-                                    <p><a href="#" style="color: white">Listado de Productos</a></p>
-                                  </div>
-                        </div>
+      <?php
+       if($_SESSION['perfil']=='1')
+       {
+       include 'views/template/nav.php';
+       }
+       else
+       {
+       include 'views/template/nav_ventas.php';
+       } ?>
+      
+      <main role="main" class="main-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="row align-items-center mb-2">
+                <div class="col">
+                  <h2 class="h5 page-title">Bienvenido </h2>
+                </div>
+                <div class="col-auto">
+                  <form class="form-inline">
+                    <div class="form-group d-none d-lg-inline">
+                      <label for="reportrange" class="sr-only">Date Ranges</label>
+                      <div id="reportrange" class="px-2 py-2 text-muted">
+                        <span class="small"></span>
+                      </div>
                     </div>
+                    <div class="form-group">
+                      <button type="button" class="btn btn-sm"><span class="fe fe-refresh-ccw fe-16 text-muted"></span></button>
+                      <button type="button" class="btn btn-sm mr-2"><span class="fe fe-filter fe-16 text-muted"></span></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <hr>
+              <div class="row my-4">
+                <div class="col-md-6">
+                  <div class="card shadow mb-4">
+                    <div class="card-body" style="border: 2px solid darkred;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <div class="row">
+                             <span class="ml-lg-2 text-bold" style="font-size:20px"><strong><?=$row_empresas['razon_social'] ?></strong></span>
+                            </div>
+                            <hr>
+                            <div class="row">
+                             <span class="ml-lg-2 text-bold" style="font-size:20px">RUC: <strong><?=$_SESSION["ruc"] ?></strong></span>
+                            </div>
+                            <div class="row">
+                             <span class="ml-lg-2 text-bold" style="font-size:20px">Fecha Vencimiento: <strong><?=$_SESSION['fecha_vencimiento']?></strong></span>
+                            </div>
+                            <div class="row">
+                             <span class="ml-lg-2 text-bold" style="font-size:20px">Servidor: <strong><?=$_SESSION['nombre_svr'].'-'.$_SESSION['tipo_svr']?></strong></span>
+                            </div>
+                            <div class="row">
+                             <span class="ml-lg-2 text-bold" style="font-size:20px">Estado Certificado: <strong><?=$estado_certificado?></strong></span>
+                            </div>
+                            <div class="row">
+                             <span class="ml-lg-2 text-bold" style="font-size:20px">Vencimiento Certificado: <strong><?=$row_empresas['fecha_certificado']?></strong></span>
+                            </div>
+                            <div class="row">
+                             <span class="ml-lg-2 text-bold" style="font-size:20px">Direccion:  <strong><?=$_SESSION['sucursal']  ?></strong></span>
+                            </div>
+                          
+                        </div>
+                        
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+              </div>              <!-- widgets -->
+              <div class="row my-4">
+                <div class="col-md-3 rounded-3">
+                  <div class="card shadow mb-4">
+                    <div class="card-body bg-primary" style="border: 2px solid white;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color: white;font-size: 16px;">Contribuyentes</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=$num_reg_contribuyente?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-users" style="font-size: 50px;color: white;"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+                <div class="col-md-3">
+                  <div class="card shadow mb-4">
+                    <div class="card-body bg-warning" style="border: 2px solid white;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color:white;font-size: 16px;">Facturas</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=$num_reg_facturas?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-file" style="font-size: 50px; color: white;"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+                <div class="col-md-3" >
+                  <div class="card shadow mb-4">
+                    <div class="card-body bg-success" style="border: 2px solid white;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color:white;font-size: 16px;">Boletas de Venta</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=$num_reg_boletas?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-file" style="font-size: 50px;color: white;"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+                <div class="col-md-3">
+                  <div class="card shadow mb-4">
+                    <div class="card-body bg-danger" style="border: 2px solid white;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color:white;font-size: 16px;">Total Ventas</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=number_format($ventas,2,'.',',')?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-credit-card" style="font-size: 50px;color: white;"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+                <div class="col-md-3">
+                  <div class="card shadow mb-4">
+                    <div class="card-body bg-info" style="border: 2px solid white;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color:white;font-size: 16px;">Notas de Venta</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=$num_reg_nc?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-file" style="font-size: 50px;"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+                <div class="col-md-3">
+                  <div class="card shadow mb-4">
+                    <div class="card-body bg-secondary" style="border: 2px solid white;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color:white;font-size: 16px;">Productos</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=$num_reg_productos?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-box" style="font-size: 50px; color: white"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+                <div class="col-md-3">
+                  <div class="card shadow mb-4">
+                    <div class="card-body" style="border: 2px solid white; background-color: #A569BD;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color:white;font-size: 16px;">Almacenes</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=$num_reg_almacenes?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-package" style="font-size: 50px; color: white"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
+                <div class="col-md-3">
+                  <div class="card shadow mb-4">
+                    <div class="card-body" style="border: 2px solid white;background-color: #046075 ;">
+                      <div class="row align-items-center">
+                        <div class="col">
+                          <small class="text-bold mb-1" style="color:white;font-size: 16px;">Total Compras</small>
+                          <h2 class="card-title mb-0" style="color:white;"><?=number_format($ventas,2,'.',',')?></h2>
+                          
+                        </div>
+                        <div class="col-4 text-right">
+                          <span class="fe fe-truck" style="font-size: 50px;color: white;"></span>
+                        </div>
+                      </div> <!-- /. row -->
+                    </div> <!-- /. card-body -->
+                  </div> <!-- /. card -->
+                </div> <!-- /. col -->
 
+              </div> <!-- end section -->
 
+              <hr>
 
-                    <hr>
-
-                    <div class="row">
-                      <div class="col-sm-6">
-                        <h3 class="text-center text-lg-start text bold">Top 5 Productos</h3>
-                        <table id="tabla_producto" class="table table-bordered">
+              <div class="row">
+                      <div class="col-md-6 my-4">
+                        <div class="card shadow">
+                         <div class="card-body">
+                          <h3 class="card-title text-center">Top <?=$top1?> Productos</h3>
+                          <hr>
+                          <table class="table table-bordered table-hover mb-0">
                           <thead class="bg-dark" style="color:white;">
                             <tr>
                               <th>Id</th>
@@ -190,9 +335,14 @@
                           <?php } ?>  
                         </tbody>
                         </table>
+                         </div>
+                        </div>
                       </div>
-                      <div class="col-sm-6">
-                        <h3 class="text-center text-lg-start text bold">Top 5 Clientes</h3>
+                      <div class="col-md-6 my-4">
+                        <div class="card shadow">
+                         <div class="card-body">
+                          <h3 class="text-card-title text-center">Top <?=$top2?> Clientes</h3>
+                          <hr>
                         <table id="tabla_producto" class="table table-bordered">
                           <thead class="bg-dark" style="color:white;">
                             <tr>
@@ -212,260 +362,42 @@
                         </tbody>
                         </table>
 
-                      </div>
-                    </div>  
-                    
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!--div class="row">
-
-
-                  <div class="col-md-4 col-sm-4 ">
-                    <div class="x_panel tile fixed_height_320">
-                      <div class="x_title">
-                        <h2>App Versions</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                          </li>
-                          <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Settings 1</a>
-                                <a class="dropdown-item" href="#">Settings 2</a>
-                              </div>
-                          </li>
-                          <li><a class="close-link"><i class="fa fa-close"></i></a>
-                          </li>
-                        </ul>
-                        <div class="clearfix"></div>
-                      </div>
-                      <div class="x_content">
-                        <h4>App Usage across versions</h4>
-                        <div class="widget_summary">
-                          <div class="w_left w_25">
-                            <span>0.1.5.2</span>
-                          </div>
-                          <div class="w_center w_55">
-                            <div class="progress">
-                              <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 66%;">
-                                <span class="sr-only">60% Complete</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="w_right w_20">
-                            <span>123k</span>
-                          </div>
-                          <div class="clearfix"></div>
-                        </div>
-
-                        <div class="widget_summary">
-                          <div class="w_left w_25">
-                            <span>0.1.5.3</span>
-                          </div>
-                          <div class="w_center w_55">
-                            <div class="progress">
-                              <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 45%;">
-                                <span class="sr-only">60% Complete</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="w_right w_20">
-                            <span>53k</span>
-                          </div>
-                          <div class="clearfix"></div>
-                        </div>
-                        <div class="widget_summary">
-                          <div class="w_left w_25">
-                            <span>0.1.5.4</span>
-                          </div>
-                          <div class="w_center w_55">
-                            <div class="progress">
-                              <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 25%;">
-                                <span class="sr-only">60% Complete</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="w_right w_20">
-                            <span>23k</span>
-                          </div>
-                          <div class="clearfix"></div>
-                        </div>
-                        <div class="widget_summary">
-                          <div class="w_left w_25">
-                            <span>0.1.5.5</span>
-                          </div>
-                          <div class="w_center w_55">
-                            <div class="progress">
-                              <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 5%;">
-                                <span class="sr-only">60% Complete</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="w_right w_20">
-                            <span>3k</span>
-                          </div>
-                          <div class="clearfix"></div>
-                        </div>
-                        <div class="widget_summary">
-                          <div class="w_left w_25">
-                            <span>0.1.5.6</span>
-                          </div>
-                          <div class="w_center w_55">
-                            <div class="progress">
-                              <div class="progress-bar bg-green" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 2%;">
-                                <span class="sr-only">60% Complete</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="w_right w_20">
-                            <span>1k</span>
-                          </div>
-                          <div class="clearfix"></div>
-                        </div>
+                         </div>
+                       </div>                        
 
                       </div>
-                    </div>
-                  </div>
+                    </div> 
 
-                  <div class="col-md-4 col-sm-4 ">
-                    <div class="x_panel tile fixed_height_320 overflow_hidden">
-                      <div class="x_title">
-                        <h2>Device Usage</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                          </li>
-                          <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Settings 1</a>
-                                <a class="dropdown-item" href="#">Settings 2</a>
-                              </div>
-                          </li>
-                          <li><a class="close-link"><i class="fa fa-close"></i></a>
-                          </li>
-                        </ul>
-                        <div class="clearfix"></div>
-                      </div>
-                      <div class="x_content">
-                        <table class="" style="width:100%">
-                          <tbody><tr>
-                            <th style="width:37%;">
-                              <p>Top 5</p>
-                            </th>
-                            <th>
-                              <div class="col-lg-7 col-md-7 col-sm-7 ">
-                                <p class="">Device</p>
-                              </div>
-                              <div class="col-lg-5 col-md-5 col-sm-5 ">
-                                <p class="">Progress</p>
-                              </div>
-                            </th>
-                          </tr>
-                          <tr>
-                            <td><iframe class="chartjs-hidden-iframe" style="width: 100%; display: block; border: 0px none; height: 0px; margin: 0px; position: absolute; inset: 0px;"></iframe>
-                              <canvas class="canvasDoughnut" style="margin: 15px 10px 10px 0px; width: 140px; height: 140px;" width="140" height="140"></canvas>
-                            </td>
-                            <td>
-                              <table class="tile_info">
-                                <tbody><tr>
-                                  <td>
-                                    <p><i class="fa fa-square blue"></i>IOS </p>
-                                  </td>
-                                  <td>30%</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p><i class="fa fa-square green"></i>Android </p>
-                                  </td>
-                                  <td>10%</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p><i class="fa fa-square purple"></i>Blackberry </p>
-                                  </td>
-                                  <td>20%</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p><i class="fa fa-square aero"></i>Symbian </p>
-                                  </td>
-                                  <td>15%</td>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <p><i class="fa fa-square red"></i>Others </p>
-                                  </td>
-                                  <td>30%</td>
-                                </tr>
-                              </tbody></table>
-                            </td>
-                          </tr>
-                        </tbody></table>
-                      </div>
-                    </div>
-                  </div>
+              
+              
+              
+             
+            </div> <!-- /.col -->
+          </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
+       
+        
+      </main> <!-- main -->
+    </div> <!-- .wrapper -->
+    <?php include 'views/template/pie.php';
+           
+ ?>
 
-
-                  <div class="col-md-4 col-sm-4 ">
-                    <div class="x_panel tile fixed_height_320">
-                      <div class="x_title">
-                        <h2>Quick Settings</h2>
-                        <ul class="nav navbar-right panel_toolbox">
-                          <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                          </li>
-                          <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Settings 1</a>
-                                <a class="dropdown-item" href="#">Settings 2</a>
-                              </div>
-                          </li>
-                          <li><a class="close-link"><i class="fa fa-close"></i></a>
-                          </li>
-                        </ul>
-                        <div class="clearfix"></div>
-                      </div>
-                      <div class="x_content">
-                        <div class="dashboard-widget-content">
-                          <ul class="quick-list">
-                            <li><i class="fa fa-calendar-o"></i><a href="#">Settings</a>
-                            </li>
-                            <li><i class="fa fa-bars"></i><a href="#">Subscription</a>
-                            </li>
-                            <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                            <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                            </li>
-                            <li><i class="fa fa-bar-chart"></i><a href="#">Auto Renewal</a> </li>
-                            <li><i class="fa fa-line-chart"></i><a href="#">Achievements</a>
-                            </li>
-                            <li><i class="fa fa-area-chart"></i><a href="#">Logout</a>
-                            </li>
-                          </ul>
-
-                          <div class="sidebar-widget">
-                              <h4>Profile Completion</h4>
-                              <canvas id="chart_gauge_01" class="" style="width: 160px; height: 100px;" width="150" height="80"></canvas>
-                              <div class="goal-wrapper">
-                                <span id="gauge-text" class="gauge-value pull-left">3,200</span>
-                                <span class="gauge-value pull-left">%</span>
-                                <span id="goal-text" class="goal-value pull-right">100%</span>
-                              </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-            </div-->
-          </div>
-        </div>
-        <!-- /page content -->
-         <?php include 'Views/Templates/pie.php' ?>
-      </div>
-    </div>
-     <?php include 'Views/Templates/footer.php' ?>
-	
+     <script>
+        function alerta()
+        {
+           Swal.fire({
+                  icon: 'error',
+                  title: 'Oops...',
+                  text: 'Certificado Digital Vencido!, puede ver como tramitar unos gratis en el link inferior, de lo contrario tendra que adquirir uno nuevo',
+                  footer:'<a href="https://www.youtube.com/watch?v=dx0ycbodAFU" target="_blank">Descargar CDT - SUNAT</a>'
+                });
+        }
+       </script>
+       <?php  if($hoy>$fecha_certificado)
+        {
+         echo "<script>alerta()</script>";
+        }
+ ?>
   </body>
 </html>

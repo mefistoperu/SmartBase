@@ -1,10 +1,11 @@
 function openModalEdit()
 {
+
 	$('#ModalCategoriaEdit').modal('show');
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -12,6 +13,8 @@ function openModalEdit()
 				}).get();
 			$('#update_id').val(arr[1]);
 			$('#update_nombre').val(arr[2]);
+			$('#update_cuenta_compra').val(arr[3]);
+			$('#update_cuenta_venta').val(arr[4]);
 		});
 }
 
@@ -23,7 +26,7 @@ function openModalDel()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{

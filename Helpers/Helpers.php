@@ -7,7 +7,7 @@ function base_url()
 
 function media()
 {
-	return BASE_URL."/Assets";
+	return BASE_URL."/assets";
 }
 
 function formatMoney($cantidad)
@@ -20,6 +20,16 @@ function formatMoney($cantidad)
 function nombre()
 {
     return  NOMBRE;
+}
+
+function logo()
+{
+    return  LOGO;
+}
+
+function corto()
+{
+    return  CORTO;
 }
 
 function empresa()

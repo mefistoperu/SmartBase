@@ -85,11 +85,23 @@
   ),
   'montserrat' => array(
     'normal' => $fontDir . '\75d8e4b0e61ab292e7d8083c2ac066e4',
+    'italic' => $fontDir . '/29a3d0d48c3a496fc38ee2fc5de2631b',
   ),
   'fontawesome' => array(
     'normal' => $fontDir . '\77d799bd27ddd2c3d26d799025e6c4a0',
   ),
   'glyphicons halflings' => array(
     'normal' => $fontDir . '\097d2c3c53265aec681e56b0da9527ed',
+  ),
+  'lato' => array(
+    'italic' => $fontDir . '/44e4c60a7625d0726917c5586600eef3',
+    'normal' => $fontDir . '/70daffc5a0e459436079609c81930e2f',
+  ),
+  'rubik' => array(
+    'italic' => $fontDir . '/f3ec58ab97438b92000a72ac84211776',
+    'normal' => $fontDir . '/82a112de692d08b55c2b11842e5a67fc',
+  ),
+  'montagu slab' => array(
+    'normal' => $fontDir . '/da560bae52f402cf9df218180c22fbd0',
   ),
 ) ?>

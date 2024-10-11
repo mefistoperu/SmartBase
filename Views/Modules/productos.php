@@ -7,6 +7,7 @@ i.nombre as nombre,
 m.id as idmarca,
 m.nombre as marca,
 i.unidad as unidad,
+i.unidadu as unidadu,
 i.precio_venta as precio_venta,
 i.precio2 as precio_venta2,
 i.costo as costo,
@@ -21,101 +22,150 @@ i.stock as stock,
 a.descripcion as descripcion_afectacion,
 a.codigo_afectacion as codigo_afectacion,
 a.cod_int as cod_int,
-a.nombre_afectacion as nombre_afectacion
+a.nombre_afectacion as nombre_afectacion,
+i.sku as sku,
+tc.id as idcategoria,
+tc.nombre as categoria,
+i.imagen as imagen,
+i.venta as venta
 FROM tbl_productos as i 
 LEFT JOIN tbl_marcas as m
 ON i.marca = m.id
 LEFT JOIN  vw_tbl_tipo_afectacion as a
 on i.afectacion = a.codigo
-WHERE i.empresa=$empresa";
+LEFT JOIN tbl_categorias as tc
+ON i.categoria = tc.id
+WHERE i.empresa=$empresa AND i.estado <>'0'";
 $resultado_data=$connect->prepare($query_data);
 $resultado_data->execute();
 $num_reg_data=$resultado_data->rowCount();
 
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-        <?php include 'Views/Templates/head.php' ?>
+       <?php include 'views/template/head.php' ?>
+       <style>
+         .dataTables_wrapper .dt-buttons {
+  float:none;  
+  text-align:center;
 
+}
+button.dt-button{
+  background-color: #ccc;
+}
+       </style>
   </head>
-
-  <body class="nav-md">
-  
-    <div class="container body">
-      <div class="main_container">
-        <?php include 'Views/Templates/menu.php' ?>
-        <?php include 'Views/Templates/cabezote.php' ?>
-
-        <!-- page content -->
-        <div class="right_col" role="main">
-          <div class="">
-            <div class="page-title">
-              <div class="title_left">
-                <h3>Productos</h3>
+  <body class="horizontal dark  ">
+    <div class="wrapper">
+      <?php
+       if($_SESSION['perfil']=='1')
+       {
+       include 'views/template/nav.php';
+       }
+       else
+       {
+       include 'views/template/nav_ventas.php';
+       } ?>
+      
+      <main role="main" class="main-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <div class="row align-items-center mb-2">
+                <div class="col">
+                  <h2 class="h5 page-title">Productos </h2>
+                </div>
+                <div class="col-auto">
+                  <form class="form-inline">
+                    <div class="form-group d-none d-lg-inline">
+                      <label for="reportrange" class="sr-only">Date Ranges</label>
+                      <div id="reportrange" class="px-2 py-2 text-muted">
+                        <span class="small"></span>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <button type="button" class="btn btn-sm"><span class="fe fe-refresh-ccw fe-16 text-muted"></span></button>
+                      <button type="button" class="btn btn-sm mr-2"><span class="fe fe-filter fe-16 text-muted"></span></button>
+                    </div>
+                  </form>
+                </div>
               </div>
+              <hr>
+              
 
-             
-            </div>
-
-            <div class="clearfix"></div>
-
-            <div class="row">
-              <div class="col-md-12 col-sm-12  ">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <h2><button type="button" class="btn btn-dark" data-toggle="modal" data-target=".bs-example-modal-lg"><i class="fa fa-plus-circle"></i> Nuevo</button></h2>
-                 
-                    <div class="clearfix"></div>
-                  </div>
-                  <div class="x_content">
-                    <table id="datatable-producto" class="table table-striped table-bordered  nowrap" cellspacing="0" width="100%">
-                      <thead class="bg-dark" style="color: white">
+              <div class="row my-4">
+                      <div class="col-md-12">
+                        <div class="card shadow">
+                          <div class="card-header">
+                             <h2><button type="button" class="btn btn-dark" data-toggle="modal" data-target=".bs-example-modal-lg"><i class="fe fe-plus-circle"></i> Nuevo</button>
+                             <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+                                 <i class="fa fa-file-excel"></i>
+                                        <span> Elegir Archivo Excel</span>
+                                </button>
+                                
+                                 <a href="<?=base_url()?>/assets/ajax/excel/productos.xlsx" target="_blank" class="btn btn-primary"><i class="fa-solid fa-download"></i> Descargar Excel</a>
+                             
+                           
+                             
+                             </h2>
+                          </div>
+                         <div class="card-body">
+                          
+                          <table id="datatable-producto" class="table table-striped table-bordered  nowrap" cellspacing="0" width="100%">
+                          <thead class="bg-dark" style="color: white">
                         <tr>
-                          <th width="15%">Acciones</th>
-                          <th width="8%">Recetas</th>
+                          <th>Acciones</th>
+                          <th>Recetas</th>
                           <th>Id</th>
                           <th>Nombre</th>
-                          <th width="10%">Marca</th>
-                          <th width="10%">Uni.</th>
+                          <th>Marca</th>
+                          <th>Categoria</th>
+                          <th>Uni.</th>
+                          <th>Factor</th>
                           <th>Stock</th>
-                          <th width="12%">P. Venta</th>
-                          <th width="12%">P. x Mayor</th>
-                          <th width="16%">Estado</th>
+                          <th>Stock uni.</th>
+                          <th>Costo uni.</th>
+                          <th>Costo Stock</th>
+                          <th>P. Venta</th>
+                          <th>P. x Mayor</th>
+                          <th>Afectacion</th>
+                          <th>Estado</th>
                        
                         </tr>
                       </thead>
-                      <tbody>
-                        <?php foreach($resultado_data as $serie ){ ?>
+                        <tbody>
+                            <?php foreach($resultado_data as $serie ){ ?>
                           <tr>
                             <td>
-                              <button class="btn btn-warning rounded-circle edit" value="<?=$serie['id'] ?>"><i class="fa fa-edit"></i></button>
-                              <button class="btn btn-danger rounded-circle delete"  value="<?=$serie['id'] ?>"><i class="fa fa-trash"></i></button>
+                              <button class="btn btn-warning rounded-circle edit" onclick="ediproducto()" value="<?=$serie['id'] ?>"><i class="fe fe-edit"></i></button>
+                              <button class="btn btn-danger rounded-circle delete" onclick="delproducto()" value="<?=$serie['id'] ?>"><i class="fe fe-trash"></i></button>
                             </td>
                             <td>
-                              <a class="btn btn-secondary rounded-circle" href="recetas/<?=$serie['id']?>"><i class="fa fa-rocket"></i></a>
+                              <a class="btn btn-secondary rounded-circle" href="recetas/<?=$serie['id']?>"><i class="fe fe-coffee"></i></a>
                             </td>
-                            <td><span id="id<?=$serie['id']?>"><?= $serie['id'] ?></span></td>
+                            <td><?= $serie['id'] ?></td>
 
                             
-                            <td><span id="nombre<?=$serie['id']?>"><?= $serie['nombre'] ?></span>
-                              <span id="costo<?=$serie['id']?>" style="visibility: hidden;"><?= $serie['costo'] ?></span>
-                              <span id="por1<?=$serie['id']?>" style="visibility: hidden;"><?= $serie['por1'] ?></span>
-                              <span id="por2<?=$serie['id']?>" style="visibility: hidden;"><?= $serie['por2'] ?></span>
-                              <span id="factor<?=$serie['id']?>" style="visibility: hidden;"><?= $serie['factor'] ?></span>
-                             
-                              <span id="descripcion<?=$serie['id']?>" style="visibility: hidden;"><?= $serie['descripcion'] ?></span>
-                              <span id="afectacion<?=$serie['id']?>" style="visibility: hidden;"><?= $serie['afectacion'] ?></span>
-                             </td>
+                            <td><?= $serie['nombre'] ?></td>
 
-                            <td><span id="idmarca<?=$serie['id']?>" style="visibility: hidden;"><?= $serie['idmarca'] ?></span>
-                              <span id="marca<?=$serie['id']?>"><?= $serie['marca'] ?></span></td>
+                            <td><?= $serie['marca'] ?></td>
+                            
+                            <td><?= $serie['categoria'] ?></td>
 
-                            <td><span id="unidad<?=$serie['id']?>"><?= $serie['unidad'] ?></span></td>
-                            <td><?= $serie['stock'] ?></span></td>
-                            <td align="right"><span id="precio_venta<?=$serie['id']?>"><?= number_format($serie['precio_venta'],2) ?></span></td>
-                            <td align="right"><span id="precio_venta2<?=$serie['id']?>"><?= number_format($serie['precio_venta2'],2) ?></span></td>
-                            <td><?php $e = $serie['estado'];
+                            <td><?= $serie['unidad'] ?></td>
+                            <td align="right"><?= $serie['factor'].' x '.$serie['unidad'] ?></td>
+                            <td align="right"><?php $stk=number_format($serie['stock']/$serie['factor'],2); 
+                                     $sf = floor($stk);
+                                      $su  = $serie['stock'] - ($serie['factor'] * $sf);
+                                      echo $sf.' ' .$serie['unidad'].' / '.$su.' '.$serie['unidadu'] ?></td>
+                            <td align="right"><?= $serie['stock'] ?></td>
+                            <td align="right"><?= $serie['costo'] ?></td>
+                            <td align="right"><?= $serie['costo']*$serie['stock'] ?></td>
+                            <td align="right"><?= number_format($serie['precio_venta'],2) ?></td>
+                            <td align="right"><?= number_format($serie['precio_venta2'],2) ?></td>
+                            <td><?=$serie['nombre_afectacion']?></td>
+                            <td align="center"><?php $e = $serie['estado'];
                                
                                if($e=='1')
                                {
@@ -131,32 +181,37 @@ $num_reg_data=$resultado_data->rowCount();
                              ?><button class="btn btn-<?=$c?>"><?=$e?></button></td>
 
                           </tr>
-                        <?php } ?>                     
+                        <?php } ?>                 
                       </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /page content -->
-        <?php include 'Views/Templates/pie.php' ?>
+                        </table>
+                         </div>
+                        </div>
+                      </div>
+                      
+                    </div> 
 
+              
+              
+              
+             
+            </div> <!-- /.col -->
+          </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
+       
+        
+      </main> <!-- main -->
+    </div> <!-- .wrapper -->
 
-      </div>
-    </div>
-
-      <?php include 'Views/Modules/Modals/nuevo_producto.php' ?>
-      <?php include 'Views/Modules/Modals/editar_producto.php' ?>
-      <?php include 'Views/Modules/Modals/eliminar_producto.php' ?>
-      
-      <?php include 'Views/Templates/footer.php' ?>
-      <script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <?php include 'views/modules/modals/nuevo_producto.php' ?>
+    <?php include 'views/modules/modals/editar_producto.php' ?>
+    <?php include 'views/modules/modals/eliminar_producto.php' ?>
+   <?php include 'views/template/pie.php' ?>
+    <script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="https://unpkg.com/imask"></script>
      <!-- <script type="text/javascript" src="Assets/vendors/inputMask/inputmask.js" charset="utf-8"></script>-->
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/4.0.8/jquery.inputmask.bundle.min.js"></script>
+
 
   <script type="text/javascript">
     $(document).ready(function () {
@@ -299,7 +354,38 @@ $num_reg_data=$resultado_data->rowCount();
   });
 })
   </script>
-  <script src="Assets/js/producto.js"></script>
-      <script src="Assets/js/funciones_producto.js"></script>
-</body>
+  <script src="assets/js/producto.js"></script>
+      <script src="assets/js/funciones_producto.js"></script>
+<!--modal para cargar archivo excel-->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <form name="cargarProducto" id="cargarProducto" enctype="multipart/form-data">
+    <div class="modal-content">
+      <div class="modal-header bg-success">
+        <h5 class="modal-title" id="exampleModalLabel">Elegir Archivo Excel</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+       
+      </div>
+      <div class="modal-body">
+          
+     <div class="file-input text-center">
+         <input type="hidden" name="action" value="cargar_excel_producto">
+         <input type="file" name="dataProductos" id="dataProductos" class="form-control"   accept=".xls,.xlsx">
+        
+     </div>
+                                 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-success"><i class="fa-solid fa-upload"></i> Cargar Productos</button>
+      </div>
+    </div>
+    </form>
+  </div>
+</div>
+
+  </body>
 </html>

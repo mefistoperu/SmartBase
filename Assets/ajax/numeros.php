@@ -666,7 +666,7 @@ function convertir($numero){
 
  
 
-		return " ".$numf." CON ".$cents."/100 SOLES";
+		return "".$numf." CON ".$cents."/100 ";
 
 }
 

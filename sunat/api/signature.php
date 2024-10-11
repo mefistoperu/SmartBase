@@ -22,6 +22,7 @@ class Signature {
 
         $pfx = file_get_contents($ruta_firma);
         $key = array();
+        
 
         openssl_pkcs12_read($pfx, $key, $pass_firma);
         $objKey->loadKey($key["pkey"]);

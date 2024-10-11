@@ -1,8 +1,8 @@
 <?php 
 
-require_once("../../Config/Config.php");
-require_once("../../Helpers/Helpers.php"); 
-require_once("../../Libraries/Conexion.php"); 
+require_once("../../config/config.php");
+require_once("../../helpers/helpers.php"); 
+require_once("../../libraries/conexion.php"); 
 session_start();
 
 //####################################CREAR CLIENTE####################################////

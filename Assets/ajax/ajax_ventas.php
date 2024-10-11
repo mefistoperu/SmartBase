@@ -1,9 +1,177 @@
 <?php 
 
-require_once("../../Config/Config.php");
-require_once("../../Helpers/Helpers.php"); 
-require_once("../../Libraries/Conexion.php"); 
+require_once("../../config/config.php");
+require_once("../../helpers/helpers.php"); 
+require_once("../../libraries/conexion.php"); 
 session_start();
+
+//listar detalle de nota de pedidpo
+
+if($_POST['action'] == 'listarDetallePedido')
+{
+    //var_dump($_POST);
+       $idventa = $_POST['id'];
+       $connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $sql="SELECT * FROM vw_tbl_coti_det WHERE idventa like '$idventa'";
+        $resultado=$connect->prepare($sql);
+        $resultado->execute();
+        $num_reg=$resultado->rowCount();
+        $detalletabla = '';
+        $cont =1;
+        foreach($resultado as $serie )
+        {
+            
+            $descripcion = $serie['descripcion'];
+            $codigo      = $serie['codigo'];
+            $descripcion = $serie['descripcion'];
+            $cantidad    = $serie['cantidad'] - $serie['entregado'];
+            $precio_unitario = $serie['precio_unitario'];
+            $valor_unitario = round($precio_unitario / 1.18,2);
+            $igv_unitario = round($valor_unitario* 0.18,2);
+            $importe_total   = $serie['importe_total'];
+            $codigo_afectacion_alt = $serie['codigo_afectacion_alt'];
+            $precio_compra = 0 ;
+            $factor = 1;
+            $cantidadu = 0;
+
+            $detalletabla .='<tr id="fila'.$cont.'">
+             <td><button type="button" class="btn btn-danger" onclick="eliminar('.$cont.')" disabled><i class="fe fe-trash"></i></button></td>
+             <td>'.$cont.'</td>
+            <td><input type="hidden" name="itemarticulo[]" value="'.$cont.'"><input type="hidden" name="idarticulo[]" value="'.$codigo.'"><input type="hidden" name="nomarticulo[]" value="'.$descripcion.'">'.$descripcion.'</td>
+            <td><input type="text" min="1" class="form-control text-right" name="cantidad[]" id="cantidad[]" value="'.$cantidad.'" onkeyup="modificarSubtotales()" <td><input type="hidden" min="1" class="form-control input-sm" name="cantidadu[]" id="cantidadu[]" value="'.$cantidadu.'" required onkeyup="modificarSubtotales()"></td> <input type="hidden" name="precio_compra[]" value="'.$precio_compra.'"> <input type="hidden" name="factor[]" value="'.$factor.'"> ></td>
+            <td><input type="text" min="1" class="form-control text-right" name="precio_venta[]" id="precio_venta[]" value="'.$precio_unitario.'" onkeyup="modificarSubtotales()" > <input type="hidden" class="form-control input-sm" name="igv_unitario[]" id="igv_unitario[]" value="'.$igv_unitario.'" readonly> <input type="hidden" class="form-control input-sm" name="valor_unitario[]" id="valor_unitario[]" value="'.$valor_unitario.'" onkeyup="modificarSubtotales()" readonly> </td>
+            <td><span id="subtotal'.$cont.'" name="subtotal">'.$importe_total.'</span><input type="hidden" id="afectacion'.$cont.'" name="afectacion[]" class="form-control" value="'.$codigo_afectacion_alt.'"></td>
+            </tr>';
+             $cont++;
+        }
+
+        $arrayData['detalle'] = $detalletabla;
+
+        echo json_encode($arrayData,JSON_UNESCAPED_UNICODE);
+
+
+        exit();
+}
+
+
+
+
+
+//listar pos
+
+if($_POST['action'] == 'listarPOS')
+{
+    $detalletabla='';
+    $nompro = $_POST['codpro'];
+    $connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    if(!empty($_POST['codpro']))
+    {
+        $nompro=$_POST['codpro'];
+        $connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $sql="SELECT * FROM tbl_productos WHERE empresa = $_SESSION[id_empresa] AND nombre like '%$nompro%'";
+        $resultado=$connect->prepare($sql);
+        $resultado->execute();
+        $num_reg=$resultado->rowCount();
+
+    }
+    else
+    {
+        $sql="SELECT * FROM tbl_productos WHERE empresa = $_SESSION[id_empresa] AND nombre like '%$nompro%'";
+        $resultado=$connect->prepare($sql);
+        $resultado->execute();
+        $num_reg=$resultado->rowCount();
+        //$data=$resultado->fetchAll(PDO::FETCH_ASSOC);
+        
+    }
+    
+     foreach($resultado as $row )
+        {
+            $id = $row['id'];
+            $nombre  = $row['nombre'];
+            $precio_venta = $row['precio_venta'];
+            $afectacion = $row['afectacion'];
+            $costo = $row['costo'];
+            $factor = $row['factor'];
+            
+            if($row['imagen']=='')
+                     {
+                      $img = 'noimage.png';
+
+                     }
+                     else
+                     {
+                      $img = $row['imagen'];
+                     }
+            
+            $detalletabla .='<a class="ml-2 mr-1 mt-1" onclick="agregarpos(\''.$id.'\',\''.$nombre.'\',\''.$precio_venta.'\',\''.$afectacion.'\',\''.$costo.'\',\''.$factor.'\')">';
+            
+            $detalletabla .='<div class="card card-primary card-outline card-outline-tabs m-0 d-flex flex-column justify-content-center align-items-center" style="position: relative;border: 1px solid lightgray;max-width:100px">';
+            $detalletabla .='<div class="card-body p-0 text-center">';
+            $detalletabla .='<div class="producto">';
+            $detalletabla .='<img src="'.media().'/images/products/'.$row["imagen"].'" alt="Imagen no disponible" class="" style="height: 100px; width: 100%;object-fit: containt">';
+            $detalletabla .='</div>';
+            $detalletabla .='</div>';
+            $detalletabla .='<span style="height:75px" class="text-center mt-1">'.$row["nombre"].'</span>';
+            $detalletabla .='<span class="text-secondary fw-bold bg-main w-100 text-center">'.$precio_venta.'</span>';
+            
+            $detalletabla .='</div>';
+            $detalletabla .='</a>';
+             
+        }
+    
+    
+     $arrayData['detalle'] = $detalletabla;
+
+        echo json_encode($arrayData,JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+
+
+
+
+//guardar pago cta
+if($_POST['action'] == 'addPago_Cta')
+{
+  var_dump($_POST);
+  exit();
+}
+
+//buscar producto
+if($_POST['action'] == 'buscarProducto')
+{
+        if(!empty($_POST['producto']))
+    {
+        $ndd=$_POST['producto'];
+        $connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $sql="SELECT * FROM tbl_productos WHERE sku = '$ndd'";
+        $resultado=$connect->prepare($sql);
+        $resultado->execute();
+        $num_reg=$resultado->rowCount();
+         $data='';
+
+         if($num_reg>0)
+         {
+             $data=$resultado->fetch(PDO::FETCH_ASSOC);
+         }
+
+
+         else
+         {
+            $data =0;
+         }
+
+         echo json_encode($data,JSON_UNESCAPED_UNICODE);
+
+    }
+    exit;
+
+}
+
 //listar detalle de nota de credito
 
 if($_POST['action'] == 'listarDetalle')
@@ -23,17 +191,29 @@ if($_POST['action'] == 'listarDetalle')
             $codigo      = $serie['codigo'];
             $descripcion = $serie['descripcion'];
             $cantidad    = $serie['cantidad'];
+            $cantidadf    = $serie['cantidad_factor'];
+            $cantidadu   = $serie['cantidad_unitario'];/*cantidad unitario*/
+            $factor      = $serie['factor'];/*factor*/
             $precio_unitario = $serie['precio_unitario'];
             $importe_total   = $serie['importe_total'];
             $codigo_afectacion_alt = $serie['codigo_afectacion_alt'];
 
             $detalletabla .='<tr id="fila'.$cont.'">
-             <td><button type="button" class="btn btn-danger" onclick="eliminar('.$cont.')" disabled><i class="fa fa-trash"></i></button></td>
+             <td><button type="button" class="btn btn-danger" onclick="eliminar('.$cont.')" disabled><i class="fe fe-trash"></i></button></td>
              <td>'.$cont.'</td>
-            <td><input type="hidden" name="itemarticulo[]" value="'.$cont.'"><input type="hidden" name="idarticulo[]" value="'.$codigo.'"><input type="hidden" name="nomarticulo[]" value="'.$descripcion.'">'.$descripcion.'</td>
-            <td><input type="text" min="1" class="form-control text-right" name="cantidad[]" id="cantidad[]" value="'.$cantidad.'" onkeyup="modificarSubtotales()" readonly></td>
+            <td><input type="hidden" name="itemarticulo[]" value="'.$cont.'"><input type="hidden" name="idarticulo[]" value="'.$codigo.'"><input type="hidden" name="cantidadu[]" value="'.$cantidadu.'"><input type="hidden" name="factor[]" value="'.$factor.'"><input type="hidden" name="nomarticulo[]" value="'.$descripcion.'">'.$descripcion.'</td>
+             
+            
+            <td><input type="text" min="1" class="form-control text-right" name="cantidad[]" id="cantidad[]" value="'.$cantidadf.'" onkeyup="modificarSubtotales()" readonly></td>
+            
+            <td><input type="text" min="1" class="form-control text-right" name="cantidadu[]" id="cantidadu[]" value="'.$cantidadu.'" onkeyup="modificarSubtotales()" readonly></td>
+            
+            
+            
             <td><input type="text" min="1" class="form-control text-right" name="precio_venta[]" id="precio_venta[]" value="'.$precio_unitario.'" onkeyup="modificarSubtotales()"  readonly></td>
+            
             <td><span id="subtotal'.$cont.'" name="subtotal">'.$importe_total.'</span><input type="hidden" id="afectacion'.$cont.'" name="afectacion[]" class="form-control" value="'.$codigo_afectacion_alt.'"></td>
+           
             </tr>';
              $cont++;
         }
@@ -46,10 +226,6 @@ if($_POST['action'] == 'listarDetalle')
         exit();
 }
 
-
-
-
-
 //buscar persona
 
 if($_POST['action'] == 'buscarPersona')
@@ -59,7 +235,7 @@ if($_POST['action'] == 'buscarPersona')
         $ndd=$_POST['cliente'];
         $connect->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
-        $sql="SELECT * FROM tbl_contribuyente WHERE num_doc like '$ndd'";
+        $sql="SELECT * FROM tbl_contribuyente WHERE num_doc like '$ndd' AND empresa = $_SESSION[id_empresa] ";
         $resultado=$connect->prepare($sql);
         $resultado->execute();
         $num_reg=$resultado->rowCount();
@@ -145,13 +321,21 @@ if($_POST['action'] == 'addCliente')
           $doc=$_POST['cliente'];
           $user = $_POST['usuario'];
           $emp = $_POST['empresa'];
+          $doc=$_POST['cliente'];
 
-                $query_articulos = "SELECT * FROM vw_tbl_serie_usuario WHERE cod_doc ='$doc' AND usuario='$user' AND empresa = $emp";
+          $d = explode('-',$doc);
+
+          $cod = $d[0];
+          $doc = $d[1];
+
+                $query_articulos = "SELECT * FROM vw_tbl_serie_usuario WHERE cod ='$cod' AND usuario='$user' AND empresa = $emp";
+                //echo($query_articulos);
                 $resultado = $connect->prepare($query_articulos);
                 $resultado->execute();
                 $row_articulo = $resultado->fetch(PDO::FETCH_ASSOC);
 
                 echo json_encode($row_articulo);
+                
                 exit;
         }
 

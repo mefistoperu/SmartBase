@@ -5,7 +5,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_categoria.php',
+			url  :  base_url+'/assets/ajax/ajax_categoria.php',
 			type : "POST",
 			async: true,
 			data : $('#form_add_categoria').serialize(),
@@ -24,13 +24,14 @@ $(document).ready(function(){
 
 		});
 	});
+	
 //##################################EDITAR CLIENTE##################################//
 	$('#form_edi_categoria').submit(function(e)
 	{
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_categoria.php',
+			url  :  base_url+'/assets/ajax/ajax_categoria.php',
 			type : "POST",
 			async: true,
 			data : $('#form_edi_categoria').serialize(),
@@ -56,7 +57,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_categoria.php',
+			url  :  base_url+'/assets/ajax/ajax_categoria.php',
 			type : "POST",
 			async: true,
 			data : $('#form_del_categoria').serialize(),
@@ -77,20 +78,3 @@ $(document).ready(function(){
 	});
 });// en ready
 
-
-function openModalEnvia()
-{
-	$('#ModalVentaEnviada').modal('show');
-
-	var arr = [];
-
-	$('#datatable-ventas > tbody > tr').click(function()
-		{
-			arr = $(this).find('td').map(function()
-				{
-					return this.innerHTML;
-				}).get();
-			$('#enviar_id').val(arr[0]);
-
-		});
-}

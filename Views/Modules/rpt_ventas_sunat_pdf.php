@@ -1,5 +1,7 @@
+
 <?php 
 session_start();
+$empresa   = $_SESSION['id_empresa'];
 $fecha_ini = $rutas[1];
 $fecha_fin = $rutas[2];
 
@@ -38,10 +40,10 @@ $row_totales = $resultado_totales->fetch(PDO::FETCH_ASSOC);
 
 
 
-require_once 'Assets/dompdf/lib/html5lib/Parser.php';
-require_once 'Assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
-require_once 'Assets/dompdf/lib/php-svg-lib/src/autoload.php';
-require_once 'Assets/dompdf/src/Autoloader.php';
+require_once 'assets/dompdf/lib/html5lib/Parser.php';
+require_once 'assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
+require_once 'assets/dompdf/lib/php-svg-lib/src/autoload.php';
+require_once 'assets/dompdf/src/Autoloader.php';
 Dompdf\Autoloader::register();
 use Dompdf\Dompdf;
 use Dompdf\Options;

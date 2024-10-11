@@ -1,9 +1,32 @@
 <?php 
 
-require_once("../../Config/Config.php");
-require_once("../../Helpers/Helpers.php"); 
-require_once("../../Libraries/Conexion.php"); 
+require_once("../../config/config.php");
+require_once("../../helpers/helpers.php"); 
+require_once("../../libraries/conexion.php"); 
 session_start();
+
+        ////////////buscar series
+if($_POST['action'] == 'searchDet')
+{
+  $det=$_POST['detraccion'];
+  $cod = $_POST['cod'];
+ 
+
+$query_detraccion = "SELECT * FROM tbl_por_det WHERE id ='$cod'";
+        
+$resultado = $connect->prepare($query_detraccion);
+$resultado->execute();
+$row_detraccion = $resultado->fetch(PDO::FETCH_ASSOC);
+
+echo json_encode($row_detraccion);
+
+exit;
+}
+
+
+
+
+
 
 //buscar persona
 

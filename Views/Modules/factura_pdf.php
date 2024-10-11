@@ -3,13 +3,16 @@ session_start();
 ob_start();
 //date_default_timezone_set("America/Lima");
 
-require_once 'Assets/dompdf/lib/html5lib/Parser.php';
-require_once 'Assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
-require_once 'Assets/dompdf/lib/php-svg-lib/src/autoload.php';
-require_once 'Assets/dompdf/src/Autoloader.php';
+require_once 'assets/dompdf/lib/html5lib/Parser.php';
+require_once 'assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
+require_once 'assets/dompdf/lib/php-svg-lib/src/autoload.php';
+require_once 'assets/dompdf/src/Autoloader.php';
 Dompdf\Autoloader::register();
 use Dompdf\Dompdf;
 use Dompdf\Options;
+
+$color_bg = '#073385';
+$color_tx = '#ffffff';
 
 
 $factura=$rutas[1];
@@ -23,7 +26,7 @@ $row_empresa=$query_empresa->fetch(PDO::FETCH_ASSOC);
 
 $query_cabecera = $connect->prepare("SELECT * FROM vw_tbl_venta_cab as c
 LEFT JOIN tbl_contribuyente as p
-ON c.codcliente = p.num_doc WHERE id=$factura");
+ON c.idcliente = p.id_persona WHERE id=$factura");
 $query_cabecera->execute();
 $row_cabecera=$query_cabecera->fetch(PDO::FETCH_ASSOC);
 
@@ -73,17 +76,26 @@ else
 } 
 
 
+ if($row_cabecera['tipocomp_ref']=='01')
+      {
+         $docref = 'FACTURA ELECTRONICA';
+      }
+      else if($row_cabecera['tipocomp_ref']=='03')
+      {
+         $docref = 'BOLETA DE VENTA ELECTRONICA';
+      }
+      
 /*$query_pago = $connect->prepare("SELECT * FROM tbl_venta_pag as p LEFT JOIN tbl_forma_pago AS f
 ON p.fdp = f.id_fdp WHERE id_venta='$factura'");
 $query_pago->execute();
 $resultado_pago = $query_pago->fetchAll(PDO::FETCH_OBJ);*/
 $numero = $row_cabecera['total'];
-include 'Assets/ajax/numeros.php';
+include 'assets/ajax/numeros.php';
 $texto=convertir($numero);
 //file_put_contents($rutaGuardado.$fileName, $fileData);
 
-$invoiceFileName = $row_empresa['ruc'].'-'.$row_cabecera['tipocomp'].'-'.$row_cabecera['serie'].'-'.$row_cabecera['correlativo'].'.pdf';
-$rutaGuardado = 'sunat/pdf/';
+$invoiceFileName = $row_empresa['ruc'].'-'.$row_cabecera['tipocomp'].'-'.$row_cabecera['serie'].'-'.$row_cabecera['correlativo'];
+$rutaGuardado = 'sunat/'.$row_empresa['ruc'].'/pdf/';
 
 
 $output='';
@@ -91,14 +103,18 @@ $output='';
 $output.='
 <html>
 <head>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   
   <style>
        body
         {
           background: white;
-          font-size: 14px;
-          font-family: tahoma;
+          font-size: 16px;
+         
+            font-family: "Montserrat", sans-serif;
+
         }
         table
         {
@@ -107,6 +123,10 @@ $output.='
         }
         th,tr{
           padding:0.5em;
+        }
+        tr
+        {
+            background-color = '.$color_bg.';
         }
         .border
         {
@@ -149,11 +169,20 @@ $output.='
           text-align: right !important;
         }  
 
-      
+      footer {
+position: fixed;
+bottom: 0cm;
+left: 0cm;
+right: 0cm;
+height: 2cm;
+
+
+}
 
 
 
   </style>
+
 </head>
 <body>
 
@@ -161,33 +190,31 @@ $output.='
       <table>
         <thead>
           <tr>
-            <th width="30%"><img src="'.base_url().'/Assets/images/'.$row_empresa[logo].'" alt="" width="200px"></th>
+            <th width="30%"><img src="'.base_url().'/assets/images/'.$row_empresa["logo"].'" alt="" width="300px"></th>
             <th>
               <table border="0">
                 <thead border="0">
                   <tr border="0">
-                    <th border="0">'.$row_empresa[razon_social].'</th>
+                    <th border="0" style="font-size:24px; font-weight:bold">'.$row_empresa["razon_social"].'</th>
                   </tr>
                   <tr>
-                    <th>'.$row_empresa[direccion].'</th>
+                    <th>'.$row_empresa["direccion"].'</th>
                   </tr>
-                  <tr>
-                    <th>correo</th>
-                  </tr>
+                 
                 </thead>
               </table>
             </th>
-            <th width="20%">
+            <th width="25%">
               <table class="border">
                 <thead>
                   <tr>
-                    <th class="text-center border1">'.$row_empresa[ruc].'</th>
+                    <th class="text-center border1">'.$row_empresa["ruc"].'</th>
                   </tr>
                   <tr>
                     <th class="text-center">'.$doc.'</th>
                   </tr>
                   <tr>
-                    <th class="text-center border2">'.$row_cabecera[serie].'-'.$row_cabecera[correlativo].'</th>
+                    <th class="text-center border2">'.$row_cabecera["serie"].'-'.$row_cabecera["correlativo"].'</th>
                   </tr>
                 </thead>
               </table>
@@ -201,15 +228,15 @@ $output.='
                 <thead>
                   <tr>
                     <th width="15%" class="border1">Cliente</th>
-                    <th class="text-left border1 border3">'.$row_cabecera[nombre_persona].'</th>
+                    <th class="text-left border1 border3">'.$row_cabecera["nombre_persona"].'</th>
                   </tr>
                   <tr>
                     <th width="15%" class="">RUC</th>
-                     <th class="text-left border3">'.$row_cabecera[num_doc].'</th>
+                     <th class="text-left border3">'.$row_cabecera["num_doc"].'</th>
                   </tr>
                   <tr>
                     <th width="15%" class="border2">Direccion</th>
-                     <th class="text-left border2 border3">'.$row_cabecera[direccion_persona].'</th>
+                     <th class="text-left border2 border3">'.$row_cabecera["direccion_persona"].'</th>
                   </tr>
                 </thead>
               </table>
@@ -224,15 +251,15 @@ $output.='
                 <thead>
                   <tr>
                     <th width="15%" class="border1">Motivo</th>
-                    <th class="text-left border1 border3">'.$row_cabecera[cod_motivo].' | '.$row_cabecera[des_motivo].'</th>
+                    <th class="text-left border1 border3">'.$row_cabecera["cod_motivo"].' | '.$row_cabecera["des_motivo"].'</th>
                   </tr>
                   <tr>
                     <th width="15%" class="">Tipo Doc Ref</th>
-                     <th class="text-left border3">'.$row_cabecera[nom_cod_motivo].'</th>
+                     <th class="text-left border3">'.$docref.'</th>
                   </tr>
                   <tr>
                     <th width="15%" class="border2">Numero Ref</th>
-                     <th class="text-left border2 border3">'.$row_cabecera[serie_ref].'-'.$row_cabecera[correlativo_ref].'</th>
+                     <th class="text-left border2 border3">'.$row_cabecera["serie_ref"].'-'.$row_cabecera["correlativo_ref"].'</th>
                   </tr>
                 </thead>
               </table>
@@ -255,10 +282,10 @@ $output.='
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="text-center">'.$row_cabecera[fecha_emision].'</td>
-                    <td class="text-center border3">'.$row_cabecera[fecha_vencimiento].'</td>
+                    <td class="text-center">'.$row_cabecera["fecha_emision"].'</td>
+                    <td class="text-center border3">'.$row_cabecera["fecha_vencimiento"].'</td>
                     <td class="text-center border3">'.$condicion.'</td>
-                    <td class="text-center border3"></td>
+                    <td class="text-center border3">'.$row_cabecera["orden_compra"].'</td>
                     <td class="text-center border3">'.$mon.'</td>
                   </tr>
                 </tbody>
@@ -270,7 +297,7 @@ $output.='
               <table class="border">
                 <thead>
                   <tr>
-                     <th width="8%" class="border1 text-center border3">Cantidad</th>
+                     <th width="8%" class="border1 text-center ">Cantidad</th>
                     <th class="border1 text-left border3">Descripcion</th>
                     <th width="5%" class="border1 text-center border3">U.M.</th>
                    
@@ -284,7 +311,7 @@ $output.='
                   
                   $output.='
                      <tr>
-                       <th class="text-right border3">'.$detalle->cantidad_factor.'/'.$detalle->cantidad_unitario.'</th>
+                       <th class="text-right">'.$detalle->cantidad_factor.'/'.$detalle->cantidad_unitario.'</th>
                        <th class="text-left border3">'.$detalle->descripcion.'</th>
                        <th class="text-center border3">'.$detalle->unidad.'</th>
                       
@@ -311,11 +338,11 @@ $output.='
                         </tr>
                         <tr>
                           <td>
-                            La '.$doc .'  '.$row_cabecera[femensajesunat].'
+                            La '.$doc .'  '.$row_cabecera["femensajesunat"].'
                           </td>
                         </tr>
                         <tr>
-                          <td>Hash: '.$row_cabecera[hash].' </td>
+                          <td>Hash: '.$row_cabecera["hash"].' </td>
                         </tr>
                       </thead>
                     </table>
@@ -323,7 +350,7 @@ $output.='
                   <th width="20%">
                     <table width="100%">
                       <tr>
-                        <td><img src="'.base_url().'/sunat/qr/'.$row_empresa[ruc].'-'.$row_cabecera[tipocomp].'-'.$row_cabecera[serie].'-'.$row_cabecera[correlativo].'.png" alt="" width="150px"></td>
+                        <td><img src="'.base_url().'/sunat/'.$row_empresa["ruc"].'/qr/'.$row_empresa["ruc"].'-'.$row_cabecera["tipocomp"].'-'.$row_cabecera["serie"].'-'.$row_cabecera["correlativo"].'.png" alt="" width="150px"></td>
                       </tr>
                     </table>
                   </th>
@@ -331,36 +358,68 @@ $output.='
                     <table class="border">
                       <tr>
                         <th class="text-right">Op. Gravadas</th>
-                        <th class="text-right border3">'.number_format($row_cabecera[op_gravadas],2).'</th>
+                        <th class="text-right border3">'.number_format($row_cabecera["op_gravadas"],2).'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">Op. Exonerdas</th>
-                        <th class="border2 border3 text-right">'.number_format($row_cabecera[op_exoneradas],2).'</th>
+                        <th class="border2 border3 text-right">'.number_format($row_cabecera["op_exoneradas"],2).'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">Op. Inafectas</th>
-                        <th class="border2 border3 text-right">'.number_format($row_cabecera[op_inafectas],2).'</th>
+                        <th class="border2 border3 text-right">'.number_format($row_cabecera["op_inafectas"],2).'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">I.G.V.</th>
-                        <th class="border2 border3 text-right">'.number_format($row_cabecera[igv],2).'</th>
+                        <th class="border2 border3 text-right">'.number_format($row_cabecera["igv"],2).'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">Total</th>
-                        <th class="border2 border3 text-right">'.number_format($row_cabecera[total],2).'</th>
+                        <th class="border2 border3 text-right">'.number_format($row_cabecera["total"],2).'</th>
                       </tr>
                     </table>
                   </th>
                 </tr>
-                
+                <tr>
+                          <td>Observacion: '.$row_cabecera["obs"].' </td>
+                        </tr>
                 
               </table>
             </td>
           </tr>
+          
         </tbody>
         
-      </table>
-    </div>
+      </table>';
+        if($row_cabecera['imp_det']>0)
+        {
+          $output .='
+          OPERACIÓN ES SUJETA AL SISTEMA DE PAGO DE OBLIGACIONES 
+TRIBUTARIAS CON EL GOBIERNO CENTRAL D.I. N°940
+          <table class="border" width="200px">
+                      
+                        <tr>
+                           <th cth class="border1 text-center"">IMPORTE DETRACCION</th>
+                           <th class="border1 text-center border3">SALDO FACTURA</th>
+                           <th class="border1 text-center border3">PORCENTAJE DETRACCION</th>
+                           <th class="border1 text-center border3">CODIGO DETRACCION</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">'.$row_cabecera['imp_det'].'</th>
+                           <th class="text-center border3">'. (intval ($row_cabecera['total']) -  intval ($row_cabecera['imp_det'])).'</th>
+                          <th class="text-center border3">'.$row_cabecera['por_det'].'</th>
+                          <th class="text-center border3">'.$row_cabecera['cod_det'].'</th>
+                        </tr>
+
+                    </table>';
+
+        }
+
+    $output .='</div>
+    
+    
+<footer>
+Powered by SmartBase 
+</footer>
   </body>
 
 </html>';
@@ -371,9 +430,13 @@ $dompdf = new DOMPDF();
 $dompdf->set_paper('A4','portrait');
 $dompdf->load_html($output);
 $dompdf->render();
+$font = $dompdf->getFontMetrics()->getFont("Arial", "bold");
 $pdf = $dompdf->output();
-$dompdf->stream($invoiceFileName, array("Attachment" => true));
-file_put_contents($rutaGuardado.$invoiceFileName, $pdf);
+header('Content-Type: application/pdf');
+header("Content-Disposition: inline; filename=".$invoiceFileName.".pdf");
+echo $pdf;
+//$dompdf->stream($invoiceFileName, array("Attachment" => true));
+//file_put_contents($rutaGuardado.$invoiceFileName, $pdf);
 
 
 

@@ -1,5 +1,7 @@
+
 <?php 
 session_start();
+$empresa = $_SESSION["id_empresa"];
 $fecha_ini = $rutas[1];
 $fecha_fin = $rutas[2];
 $usuario   = $rutas[3];
@@ -8,29 +10,58 @@ if($usuario=='1')
 {
   $vendedor = 'ADMIN';
 }
+
 else if($usuario =='5')
 {
   $vendedor = 'VENTAS';
 }
+
+else if($usuario =='0')
+{
+  $vendedor = 'MES';
+}
 //echo $usuario;exit;
-$query_fecha = $connect->query("SELECT fecha FROM vw_tbl_ventas_diarias WHERE vendedor=$usuario AND fecha BETWEEN '$fecha_ini' AND '$fecha_fin'  GROUP by  fecha");
+
+if($usuario == '0')
+{
+  $query_fecha = $connect->query("SELECT fecha FROM vw_tbl_ventas_diarias WHERE  fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND idempresa = $empresa  GROUP by  fecha");
+}
+else
+{
+  $query_fecha = $connect->query("SELECT fecha FROM vw_tbl_ventas_diarias WHERE vendedor='$usuario' AND fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND idempresa = $empresa  GROUP by  fecha");
+}
+
 $resultado_fecha = $query_fecha->fetchAll(PDO::FETCH_OBJ);
 //print_r($resultado_fecha);exit();die();
 
 
-
+if($usuario == '0')
+{
 $query_totales = $connect->prepare("SELECT sum(if(tipocomp='07',-op_gravadas,op_gravadas)) as op_gravadas,
                             sum(if(tipocomp='07',-op_exoneradas,op_exoneradas)) as op_exoneradas,
                             sum(if(tipocomp='07',-op_inafectas,op_inafectas)) as op_inafectas,
                             sum(if(tipocomp='07',-igv,igv)) as igv,
                             sum(if(tipocomp='07',-total,total)) as total
-                            FROM vw_tbl_ventas_diarias WHERE vendedor=$usuario AND fecha BETWEEN '$fecha_ini' AND  '$fecha_fin'");
+                            FROM vw_tbl_ventas_diarias WHERE fecha BETWEEN '$fecha_ini' AND  '$fecha_fin' AND idempresa = $empresa");
+}
+else
+{
+$query_totales = $connect->prepare("SELECT sum(if(tipocomp='07',-op_gravadas,op_gravadas)) as op_gravadas,
+                            sum(if(tipocomp='07',-op_exoneradas,op_exoneradas)) as op_exoneradas,
+                            sum(if(tipocomp='07',-op_inafectas,op_inafectas)) as op_inafectas,
+                            sum(if(tipocomp='07',-igv,igv)) as igv,
+                            sum(if(tipocomp='07',-total,total)) as total
+                            FROM vw_tbl_ventas_diarias WHERE vendedor=$usuario AND fecha BETWEEN '$fecha_ini' AND  '$fecha_fin' AND idempresa = $empresa");  
+}
+
+
                             $query_totales->execute();
                             $row_t = $query_totales->fetch(PDO::FETCH_ASSOC);
-require_once 'Assets/dompdf/lib/html5lib/Parser.php';
-require_once 'Assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
-require_once 'Assets/dompdf/lib/php-svg-lib/src/autoload.php';
-require_once 'Assets/dompdf/src/Autoloader.php';
+                            //print_r($row_t);exit();die();
+require_once 'assets/dompdf/lib/html5lib/Parser.php';
+require_once 'assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
+require_once 'assets/dompdf/lib/php-svg-lib/src/autoload.php';
+require_once 'assets/dompdf/src/Autoloader.php';
 Dompdf\Autoloader::register();
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -158,19 +189,43 @@ $output.='
 
                            $fecha_dia = $fechat->fecha;
 
-                          
-                           $query_tdoc = $connect->query("SELECT * FROM vw_tbl_ventas_diarias WHERE vendedor=$usuario AND fecha ='$fecha_dia'  ORDER BY tipocomp,serie");
+                          if($usuario == '0')
+                          {
+                            $query_tdoc = $connect->query("SELECT * FROM vw_tbl_ventas_diarias WHERE  fecha ='$fecha_dia' AND idempresa = $empresa ORDER BY tipocomp,serie");
+                          }
+                          else
+                          {
+                            $query_tdoc = $connect->query("SELECT * FROM vw_tbl_ventas_diarias WHERE vendedor=$usuario AND fecha ='$fecha_dia' AND idempresa = $empresa   ORDER BY tipocomp,serie");
+
+                          }
+                           
                            $resultado_tdoc = $query_tdoc->fetchAll(PDO::FETCH_OBJ);
 
                            foreach($resultado_tdoc as $tdata)
                            {
 
-                        $query_totales_dia = $connect->prepare("SELECT sum(if(tipocomp='07',-op_gravadas,op_gravadas)) as op_gravadas,
+                            if($usuario == '0')
+                            {
+                              $query_totales_dia = $connect->prepare("SELECT sum(if(tipocomp='07',-op_gravadas,op_gravadas)) as op_gravadas,
                             sum(if(tipocomp='07',-op_exoneradas,op_exoneradas)) as op_exoneradas,
                             sum(if(tipocomp='07',-op_inafectas,op_inafectas)) as op_inafectas,
                             sum(if(tipocomp='07',-igv,igv)) as igv,
                             sum(if(tipocomp='07',-total,total)) as total
-                            FROM vw_tbl_ventas_diarias WHERE vendedor=$usuario AND fecha = '$fecha_dia'");
+                            FROM vw_tbl_ventas_diarias WHERE  fecha = '$fecha_dia' AND idempresa = $empresa ");
+
+                            }
+                            else
+                            {
+                              $query_totales_dia = $connect->prepare("SELECT sum(if(tipocomp='07',-op_gravadas,op_gravadas)) as op_gravadas,
+                            sum(if(tipocomp='07',-op_exoneradas,op_exoneradas)) as op_exoneradas,
+                            sum(if(tipocomp='07',-op_inafectas,op_inafectas)) as op_inafectas,
+                            sum(if(tipocomp='07',-igv,igv)) as igv,
+                            sum(if(tipocomp='07',-total,total)) as total
+                            FROM vw_tbl_ventas_diarias WHERE vendedor=$usuario AND fecha = '$fecha_dia' AND idempresa = $empresa");
+
+                            }
+
+                        
                             $query_totales_dia->execute();
                             $row_td = $query_totales_dia->fetch(PDO::FETCH_ASSOC);
 
@@ -233,11 +288,11 @@ $output.='
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td class="text-right">'.$row_t[op_gravadas].'</td>
-                            <td class="text-right">'.$row_t[op_exoneradas].'</td>
-                            <td class="text-right">'.$row_t[op_inafectas].'</td>
-                            <td class="text-right">'.$row_t[igv].'</td>
-                            <td class="text-right">'.$row_t[total].'</td>
+                            <td class="text-right">'.$row_t["op_gravadas"].'</td>
+                            <td class="text-right">'.$row_t["op_exoneradas"].'</td>
+                            <td class="text-right">'.$row_t["op_inafectas"].'</td>
+                            <td class="text-right">'.$row_t["igv"].'</td>
+                            <td class="text-right">'.$row_t["total"].'</td>
                           </tr>
                       </tfoot>
                       

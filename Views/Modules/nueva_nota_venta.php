@@ -1,19 +1,23 @@
 <?php 
 
+$usabarras  = $_SESSION["usabarras"];
+$pormayor  = $_SESSION["venta_por_mayor"];
+//echo $usabarras;
 $empresa = $_SESSION["id_empresa"];
 $hoy = date('Y-m-d');
 
-$query_documento = "SELECT * FROM tbl_tipo_documento WHERE fe='1' AND id in ('99')";
+$query_documento = "SELECT * FROM tbl_tipo_documento WHERE fe='1' AND id in ('CT','NP','99')";
 $resultado_documento=$connect->prepare($query_documento);
 $resultado_documento->execute(); 
 $num_reg_documento=$resultado_documento->rowCount();
+
 
 
 $lista1=$connect->query("SELECT * FROM tbl_contribuyente WHERE empresa= $empresa");
 $resultado1=$lista1->fetchAll(PDO::FETCH_OBJ);
 
 
-$query_forma = "SELECT * FROM tbl_forma_pago ORDER BY dias";
+$query_forma = "SELECT * FROM tbl_forma_pago ORDER BY tipo";
 $resultado_forma=$connect->prepare($query_forma);
 $resultado_forma->execute(); 
 $num_reg_forma=$resultado_forma->rowCount();
@@ -24,73 +28,84 @@ $resultado_tipo->execute();
 $num_reg_tipo=$resultado_tipo->rowCount();
 
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
-        <?php include 'Views/Templates/head.php' ?>
+       <?php include 'views/template/head.php' ?>
+
+       <style>
+         .table-bordered th, .table-bordered td {
+                      border: 1px solid #dce4ec;
+                        border-left-width: 1px;
+                    }
+          .table-bordered {
+                border: 1px solid #d3dbe3;
+                  border-right-width: 1px;
+              }
+                    
+           </style> 
   </head>
-
- <body class="nav-sm">
-    <div class="container body">
-      <div class="main_container">
-   
-           <?php if($_SESSION["perfil"]=='1'){ include 'Views/Templates/menu.php';}
-                 else{include 'Views/Templates/menu_ventas.php';} ?>
-        <?php include 'Views/Templates/cabezote.php' ?>
+  <body class="horizontal dark  ">
+    <div class="wrapper">
+      <?php
+       if($_SESSION['perfil']=='1')
+       {
+       include 'views/template/nav.php';
+       }
+       else
+       {
+       include 'views/template/nav_ventas.php';
+       } ?>
+      
+      <main role="main" class="main-content">
       <form id="nota_nueva" name="nota_nueva">
-        <!-- page content -->
-        <div class="right_col" role="main">
-          <div class="">
-            <div class="page-title">
-              <div class="title_left">
-                <h3>Nueva Venta</h3>
-              </div>
-
-             
-            </div>
-
-            <div class="clearfix"></div>
-
-            <div class="row">
-              <div class="col-md-12 col-sm-12  ">
-                <div class="x_panel">
-                  <div class="x_title">
-                    <div class="row">
-                      <div class="col-sm-2">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col">
+                  <h2 class="h5 page-title">Nueva nota de Venta </h2>
+                </div>
+            <div class="col-12">
+              <div class="row">
+                      <div class="col-lg-2 col-sm-6 col-sm-2">
                         <label for="">Cliente</label>
-                        <div class="input-group">
+                         <div class="input-group">
                         <span class="input-group-btn">
-                          <button type="button" class="btn btn-danger go-class" data-toggle="modal" data-target="#ModalClientes"><i class="fa fa-search"></i></button>
+                          <button type="button" class="btn btn-danger go-class" data-toggle="modal" data-target="#ModalClientes"><i class="fe fe-search"></i></button>
                         </span>
                           <input type="hidden" id="id_ruc" name="id_ruc" value="">
                           <input type="hidden" name="action" value="nota_venta">
                           <input type="text" class="form-control" name="ruc_persona" id="ruc_persona" maxlength="11" required>
                         <span class="input-group-btn">
-                            <button type="button" class="btn btn-primary" onclick="cliente2()"><i class="fa fa-search"></i></button>
+                            <button type="button" class="btn btn-primary" onclick="cliente2()"><i class="fe fe-search"></i></button>
                         </span>
                         </div>
                       </div>
-                      <div class="col-sm-4">
+                      <div class="col-lg-4 col-sm-6 col-sm-4">
 
                         <label for="">Razon Social</label>
                         <input type="text" class="form-control" name="razon_social" id="razon_social" readonly>
                       </div>
-                      <div class="col-sm-4">
+                      <div class="col-lg-2 col-sm-6 col-sm-2">
+                        <label for="">Obs</label>
+                        <input type="text" class="form-control" name="obs" id="obs" onkeyup="javascript:this.value=this.value.toUpperCase();">
+                      </div>
+                      <div class="col-lg-4 col-sm-6 col-sm-4">
                         <label for="">Direccion</label>
                         <input type="text" class="form-control" name="razon_direccion" id="razon_direccion" readonly>
                       </div>
-                      <div class="col-sm-2">
-                        <label for="">Cotizacion</label>
-                        <input type="text" class="form-control" name="orden_compra" id="orden_compra">
-                      </div>
+                      
                     
                     </div>
                     <div class="row">
-                      <div class="col-sm-2">
-                        <label for="">Fecha Emision</label>
-                        <input type="date" class="form-control" value="<?=$hoy?>" name="fecha_emision" id="fecha_emision">
+                      <div class="col-lg-3 col-sm-6 col-sm-4">
+                        <label for="">Cotizacion</label>
+                        <input type="text" class="form-control" name="orden_compra" id="orden_compra">
                       </div>
-                      <div class="col-sm-2">
+                      <div class="col-lg-3 col-sm-6 col-sm-4">
+                        <label for="">Fecha Emision</label>
+                        <input type="date" class="form-control" value="<?=$hoy?>" name="fecha_emision" id="fecha_emision" >
+                      </div>
+                      <div class="col-lg-3 col-sm-6 col-sm-4">
                         <label for="">Condicion</label>
                         <select class="form-control select2" style="width: 100%;" name="condicion" id="condicion">
                   
@@ -100,40 +115,40 @@ $num_reg_tipo=$resultado_tipo->rowCount();
                                {?>
                                 <option value="<?= $row_forma['tipo'] ?>"><?=$row_forma['nombre_fdp']?></option>;
                                <?php  } ?>
-                          </select>
+                        </select>
                       </div>
-                      <div class="col-sm-2">
+                      <div class="col-lg-3 col-sm-6 col-sm-4">
                         <label for="">Fecha Vencimiento</label>
-                        <input type="date" class="form-control" value="<?=$hoy?>" name="fecha_vencimiento" id="fecha_vencimiento">
+                        <input type="date" class="form-control" value="<?=$hoy?>" name="fecha_vencimiento" id="fecha_vencimiento" readonly="">
                       </div>
                       
                       
-                      <div class="col-sm-2">
+                      <div class="col-lg-3 col-sm-6 col-sm-4">
                         <label for="">Tipo Doc:</label>
-                         <select class="form-control select2" style="width: 100%;" name="tip_cpe" id="tip_cpe">
+                         <select class="form-control select2" style="width: 100%;" name="tip_cpe" id="tip_cpe" required>
                   
-                          <option selected="selected">Seleccionar Documento</option>
+                          <option value="">Seleccionar Documento</option>
                           <?php 
                                   while($row_documento = $resultado_documento->fetch(PDO::FETCH_ASSOC) )
                              {?>
-                              <option value="<?= $row_documento['id'] ?>"><?=$row_documento['nombre']?></option>;
+                              <option value="<?= $row_documento['cod'].'-'.$row_documento['id'] ?>"><?=$row_documento['nombre']?></option>;
                              <?php  } ?>
                         </select>
                       </div>
-                      <div class="col-sm-2">
+                      <div class="col-lg-3 col-sm-6 col-sm-4">
                         <label for="">Serie:</label>
                         <input type="text" class="form-control" onkeyup="javascript:this.value=this.value.toUpperCase();" maxlength="4" readonly name="serie" id="serie">
                       </div>
-                      <div class="col-sm-2">
+                      <div class="col-lg-3 col-sm-6 col-sm-4">
                         <label for="">Numero:</label>
                         <input type="text" class="form-control" readonly name="numero" id="numero">
                         <input type="hidden" id="vendedor" name="vendedor" value="<?= $_SESSION['id'] ?>">
                         <input type="hidden" id="empresa" name="empresa" value="<?= $_SESSION['id_empresa']?>">
-
                       </div>
                     </div>
-                      <div class="clearfix">
+                    <div class="clearfix">
                       <div class="row mt-3">
+                        <?php if($pormayor == 'SI'){ ?>
                         <div class="col-lg-2 col-sm-6 col-sm-4">
                           <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#addProdcuto"><i class="fa fa-plus-circle"></i> P. Minorista</button>
                            
@@ -141,8 +156,13 @@ $num_reg_tipo=$resultado_tipo->rowCount();
                         <div class="col-lg-2 col-sm-6 col-sm-4">
                           <button class="btn btn-secondary" type="button" data-toggle="modal" data-target="#addProdcuto1"><i class="fa fa-plus-circle"></i> P. Mayorista</button>
                         </div>
+                        <?php } ?>
+                        <div class="col-lg-2 col-sm-6 col-sm-4">
+                          <button class="btn btn-info" type="button" data-toggle="modal" data-target="#addProdcuto2"><i class="fa fa-plus-circle"></i> Productos</button>
+                        </div>
+
                          <div class="col-lg-2 col-sm-6 col-sm-4">
-                          <button class="btn btn-success" type="submit" id="btnGuardar"><i class="fa fa-save"></i> Guardar</button>
+                          <button class="btn btn-success" type="button" id="btnGuardarNV"><i class="fa fa-save"></i> Guardar</button>
                          </div>
                          <div class="col-lg-2 col-sm-6 col-sm-4">
                           <button id="btnPagar" class="btn btn-warning" type="button" data-toggle="modal" data-target="#addPago"><i class="fa fa-usd"></i> Pagos</button>
@@ -155,71 +175,76 @@ $num_reg_tipo=$resultado_tipo->rowCount();
                        
                       </div>
                     </div>
-                  
-                  </div>
-                  <div class="x_content">
-                    <table id="tabla" class="table table-bordered table-striped table-condensed table-hover">
-                  <thead class="bg-dark" style="color:white">
+                    <?php if($usabarras == 'SI'){ ?>
+                    <hr>
+                      <div class="row">
+                      <div class="col-sm-4">
+                        <label for="">Codigo de Barras</label>
+                        <input type="text" class="form-control" name="cbarras" id="cbarras">
+                      </div>
+                    </div>
+                    <?php } ?>
+                    <hr>
+
+                    <div class="row">
+                     <div class="col-xs-12 col-sm-12 col-md-12" style="overflow: auto; position: relative;border: 0px; width: 100%; ">
+                    <table id="tabla" class="table table-bordered table-hover table-striped datatables dataTable no-footer" width="100%" bordercolor="#00CC66">
+                  <thead class="bg-dark" style="color:white" >
                     <tr>
                       <th width="10%">Acciones</th>
                       <th width="5%">Item</th>
-                      <th>Producto</th>
-                      <th width="10%">Cant.</th>
-                       <th width="10%">Unidad</th>
-                      <th width="10%">Precio</th>
-                      <th width="10%">Total</th>
+                      <th width="50%">Producto</th>
+                      <th>Cant.</th>
+                      <th>Unidad</th>
+                      <th>Precio</th>
+                      <th>Total</th>
                       
                     </tr>
                   </thead>
-
+                
                    <tfoot>
                     <tr>
-                      <td colspan="4"></td>
-                      <td>Op. Gravadas</td>
-                      <td>S/.</td>
+                      <th colspan="5"></th>
+                      <th>Op. Gravadas</th>
                       <td><input type="text" class="form-control text-right" name="op_g" id="op_g" value="0.00" readonly></td>
                     </tr>
-                     <tr>
-                      <td colspan="4"></td>
-                      <td>Op. Exonerada</td>
-                      <td>S/.</td>
+                    <tr>
+                      <th colspan="5"></th>
+                      <th>Op. Exonerada</th>
                       <td><input type="text" class="form-control text-right" name="op_e" id="op_e" value="0.00" readonly></td>
                     </tr>
-                     <tr>
-                      <td colspan="4"></td>
-                      <td>Op. Inafecta</td>
-                      <td>S/.</td>
+                    <tr>
+                      <th colspan="5"></th>
+                      <th>Op. Inafecta</th>
                       <td><input type="text" class="form-control text-right" name="op_i" id="op_i" value="0.00" readonly></td>
                     </tr>
-                     <tr>
-                      <td colspan="4"></td>
-                      <td>I.G.V.</td>
-                      <td>S/.</td>
+                    <tr>
+                      <th colspan="5"></th>
+                      <th>I.G.V.</th>
                       <td><input type="text" class="form-control text-right" name="igv" id="igv" value="0.00" readonly></td>
                     </tr>
-                     <tr>
-                      <td colspan="4"></td>
-                      <td>Total</td>
-                      <td>S/.</td>
-                      <td><input type="text" class="form-control text-right" name="total" id="total" value="0.00" readonly></td>
+                    <tr>
+                      <th colspan="5"></th>
+                      <th>Total</th>
+                       <td><input type="text" class="form-control text-right" name="total" id="total" value="0.00" readonly></td>
                     </tr>
-                  </tfoot>
+                   </tfoot>
+                                       
+                 
                 </table>
-                
+                   </div>
                   </div>
-                   
-                  
-                </div>
-                
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /page content -->
 
-                 <!-- /modal pagos-->
-         <!-- Modal -->
-<div class="modal fade" id="addPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+
+                                  
+              
+              
+             
+            </div> <!-- /.col -->
+          </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
+          <div class="modal fade" id="addPago" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header bg-warning">
@@ -235,15 +260,14 @@ $num_reg_tipo=$resultado_tipo->rowCount();
            <input type="text" name="montopago" id="montopago" value="" readonly class="form-control border-danger text-center text-bold" style="color: red; background-color: #96EC94; font-weight: bold; font-size: 20px;">
           </div>
            </div>
-
           <div class="row">
             <div class="col-sm-12">
               <label for="">Efectivo</label>
-              <input type="text" name="efectivo" onkeyup="pagos()" id="efectivo" value="0.00" class="form-control">
+              <input type="text" name="efectivo" onkeyup="pagos()" id="efectivo" value="0.00" class="form-control text-right">
             </div>
+            
           </div>
-
-            <div class="row">
+          <div class="row">
             <div class="col-sm-6">
               <label for="">Otro Medio de Pago</label>
               <select name="cvisa" id="cvisa" class="form-control">
@@ -283,24 +307,21 @@ $num_reg_tipo=$resultado_tipo->rowCount();
     </div>
   </div>
 </div>
+        </form>
+      </main> <!-- main -->
+    </div> <!-- .wrapper -->
+
           <!-- /fin modal pagos -->
-      </form>
-        <?php include 'Views/Templates/pie.php' ?>
-      </div>
-    </div>
-    
-     <?php include 'Views/Modules/Modals/persona.php' ?>
-      <?php include 'Views/Templates/footer.php' ?>
-    <?php include 'Views/Modules/Modals/buscar_contribuyente_nv.php' ?>
+       <?php include 'views/modules/modals/persona.php' ?> 
+     <?php include 'views/modules/modals/buscar_contribuyente_nv.php' ?> 
+      <?php include 'views/modules/modals/articulo_venta.php' ?> 
+    <?php include 'views/template/pie.php' ?>
 
-    <?php include 'Views/Modules/Modals/articulo_venta.php' ?>
-      <script src="Assets/js/funciones_ventas.js"></script>
-    <script src="<?=media()?>/js/tablas.js"></script>
 
-      <script src="Assets/js/sunat_reniec.js"></script>
-    
-  
+      <script src="<?=media()?>/js/funciones_ventas.js"></script>
+   
 
-      
+      <script src="<?=media()?>/js/sunat_reniec.js"></script>
+
   </body>
 </html>

@@ -3,10 +3,10 @@ session_start();
 ob_start();
 //date_default_timezone_set("America/Lima");
 
-require_once 'Assets/dompdf/lib/html5lib/Parser.php';
-require_once 'Assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
-require_once 'Assets/dompdf/lib/php-svg-lib/src/autoload.php';
-require_once 'Assets/dompdf/src/Autoloader.php';
+require_once 'assets/dompdf/lib/html5lib/Parser.php';
+require_once 'assets/dompdf/lib/php-font-lib/src/FontLib/Autoloader.php';
+require_once 'assets/dompdf/lib/php-svg-lib/src/autoload.php';
+require_once 'assets/dompdf/src/Autoloader.php';
 Dompdf\Autoloader::register();
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -78,7 +78,7 @@ ON p.fdp = f.id_fdp WHERE id_venta='$factura'");
 $query_pago->execute();
 $resultado_pago = $query_pago->fetchAll(PDO::FETCH_OBJ);*/
 $numero = $row_cabecera['total'];
-include 'Assets/ajax/numeros.php';
+include 'assets/ajax/numeros.php';
 $texto=convertir($numero);
 //file_put_contents($rutaGuardado.$fileName, $fileData);
 
@@ -158,15 +158,15 @@ $output.='
       <table>
         <thead>
           <tr>
-            <th width="30%"><img src="'.base_url().'/Assets/images/'.$row_empresa[logo].'" alt="" width="200px"></th>
+            <th width="30%"><img src="'.base_url().'/assets/images/'.$row_empresa['logo'].'" alt="" width="200px"></th>
             <th>
               <table border="0">
                 <thead border="0">
                   <tr border="0">
-                    <th border="0">'.$row_empresa[razon_social].'</th>
+                    <th border="0">'.$row_empresa['razon_social'].'</th>
                   </tr>
                   <tr>
-                    <th>'.$row_empresa[direccion].'</th>
+                    <th>'.$row_empresa['direccion'].'</th>
                   </tr>
                   <tr>
                     <th>correo</th>
@@ -178,13 +178,13 @@ $output.='
               <table class="border">
                 <thead>
                   <tr>
-                    <th class="text-center border1">'.$row_empresa[ruc].'</th>
+                    <th class="text-center border1">'.$row_empresa['ruc'].'</th>
                   </tr>
                   <tr>
                     <th class="text-center">'.$doc.'</th>
                   </tr>
                   <tr>
-                    <th class="text-center border2">'.$row_cabecera[serie].'-'.$row_cabecera[correlativo].'</th>
+                    <th class="text-center border2">'.$row_cabecera['serie'].'-'.$row_cabecera['correlativo'].'</th>
                   </tr>
                 </thead>
               </table>
@@ -198,15 +198,15 @@ $output.='
                 <thead>
                   <tr>
                     <th width="15%" class="border1">Cliente</th>
-                    <th class="text-left border1 border3">'.$row_cabecera[nombre_persona].'</th>
+                    <th class="text-left border1 border3">'.$row_cabecera['nombre_persona'].'</th>
                   </tr>
                   <tr>
                     <th width="15%" class="">RUC</th>
-                     <th class="text-left border3">'.$row_cabecera[num_doc].'</th>
+                     <th class="text-left border3">'.$row_cabecera['num_doc'].'</th>
                   </tr>
                   <tr>
                     <th width="15%" class="border2">Direccion</th>
-                     <th class="text-left border2 border3">'.$row_cabecera[direccion_persona].'</th>
+                     <th class="text-left border2 border3">'.$row_cabecera['direccion_persona'].'</th>
                   </tr>
                 </thead>
               </table>
@@ -226,8 +226,8 @@ $output.='
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="text-center">'.$row_cabecera[fecha_emision].'</td>
-                    <td class="text-center border3">'.$row_cabecera[fecha_vencimiento].'</td>
+                    <td class="text-center">'.$row_cabecera['fecha_emision'].'</td>
+                    <td class="text-center border3">'.$row_cabecera['fecha_vencimiento'].'</td>
                     <td class="text-center border3">'.$condicion.'</td>
                     <td class="text-center border3"></td>
                     <td class="text-center border3">'.$mon.'</td>
@@ -282,11 +282,11 @@ $output.='
                         </tr>
                         <tr>
                           <td>
-                            La '.$doc .'  '.$row_cabecera[femensajesunat].'
+                            La '.$doc .'  '.$row_cabecera['femensajesunat'].'
                           </td>
                         </tr>
                         <tr>
-                          <td>Hash: '.$row_cabecera[hash].' </td>
+                          <td>Hash: '.$row_cabecera['hash'].' </td>
                         </tr>
                       </thead>
                     </table>
@@ -294,7 +294,7 @@ $output.='
                   <th width="20%">
                     <table width="100%">
                       <tr>
-                        <td><img src="'.base_url().'/sunat/qr/'.$row_empresa[ruc].'-'.$row_cabecera[tipocomp].'-'.$row_cabecera[serie].'-'.$row_cabecera[correlativo].'.png" alt="" width="150px"></td>
+                        <td></td>
                       </tr>
                     </table>
                   </th>
@@ -302,23 +302,23 @@ $output.='
                     <table class="border">
                       <tr>
                         <th class="text-right">Op. Gravadas</th>
-                        <th class="text-right border3">'.$row_cabecera[op_gravadas].'</th>
+                        <th class="text-right border3">'.$row_cabecera['op_gravadas'].'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">Op. Exonerdas</th>
-                        <th class="border2 border3 text-right">'.$row_cabecera[op_exoneradas].'</th>
+                        <th class="border2 border3 text-right">'.$row_cabecera['op_exoneradas'].'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">Op. Inafectas</th>
-                        <th class="border2 border3 text-right">'.$row_cabecera[op_inafectas].'</th>
+                        <th class="border2 border3 text-right">'.$row_cabecera['op_inafectas'].'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">I.G.V.</th>
-                        <th class="border2 border3 text-right">'.$row_cabecera[igv].'</th>
+                        <th class="border2 border3 text-right">'.$row_cabecera['igv'].'</th>
                       </tr>
                       <tr>
                         <th class="border2 text-right">Total</th>
-                        <th class="border2 border3 text-right">'.$row_cabecera[total].'</th>
+                        <th class="border2 border3 text-right">'.$row_cabecera['total'].'</th>
                       </tr>
                     </table>
                   </th>
@@ -337,7 +337,7 @@ $output.='
 </html>';
 
 //echo $output; exit();
-
+/*
 $dompdf = new DOMPDF();
 $dompdf->set_paper('A4','portrait');
 $dompdf->load_html($output);
@@ -345,6 +345,21 @@ $dompdf->render();
 $pdf = $dompdf->output();
 $dompdf->stream($invoiceFileName, array("Attachment" => true));
 file_put_contents($rutaGuardado.$invoiceFileName, $pdf);
+*/
+/*echo $output; exit();*/
+
+
+$dompdf = new DOMPDF();
+$dompdf->set_paper('A4','portrait');
+$dompdf->load_html($output);
+$dompdf->render();
+$font = $dompdf->getFontMetrics()->getFont("Arial", "bold");
+$pdf = $dompdf->output();
+header('Content-Type: application/pdf');
+header("Content-Disposition: inline; filename=".$invoiceFileName.".pdf");
+echo $pdf;
+//$dompdf->stream($invoiceFileName, array("Attachment" => true));
+//file_put_contents($rutaGuardado.$invoiceFileName, $pdf);
 
 
 

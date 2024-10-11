@@ -5,7 +5,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_insumo.php',
+			url  :  base_url+'/assets/ajax/ajax_insumo.php',
 			type : "POST",
 			async: true,
 			data : $('#form_insumo').serialize(),
@@ -30,7 +30,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_insumo.php',
+			url  :  base_url+'/assets/ajax/ajax_insumo.php',
 			type : "POST",
 			async: true,
 			data : $('#form_insumo_editar').serialize(),
@@ -56,7 +56,7 @@ $(document).ready(function(){
 		$('#cargando').modal('show');
 		e.preventDefault();
 		$.ajax({
-			url  :  base_url+'/Assets/ajax/ajax_insumo.php',
+			url  :  base_url+'/assets/ajax/ajax_insumo.php',
 			type : "POST",
 			async: true,
 			data : $('#form_delete_insumo').serialize(),

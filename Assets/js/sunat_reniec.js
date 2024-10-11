@@ -3,7 +3,7 @@ $(function()
 	$('#botoncito').on('click', function(){
 		var dni = $('#dni').val();
 		var tip = $('#tipo_doc').val(); 
-		var url = 'Assets/ajax/consulta_sunat.php';
+		var url = 'assets/ajax/consulta_sunat.php';
 		$('#cargando').modal('show');
 		$.ajax({
 		type:'POST',
@@ -34,7 +34,7 @@ $(function()
             $("#materno").prop("readonly", true);
             $("#nombre1").prop("readonly", true);
             $("#nombre2").prop("readonly", true);
-            $('#razon').prop("readonly", true);
+            $('#razon').prop("readonly", false);
 		}
 		else if(datos[1]=='6')
 		{

@@ -1,6 +1,6 @@
 <?php 
 
-  $query = "SELECT * FROM tbl_series WHERE flat = '0'";
+  $query = "SELECT * FROM tbl_series WHERE flat = '0' AND id_empresa = $empresa";
   $resultado=$connect->prepare($query);
   $resultado->execute(); 
   $num_reg=$resultado->rowCount();

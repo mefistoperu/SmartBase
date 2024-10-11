@@ -1,5 +1,5 @@
  <!--=====================================
-  MODAL TIPO DE PROVEEDOR
+  MODAL TIPO DE PROVEEDORxxxx
   ======================================-->
   <div id="modalCliente" class="modal fade" role="dialog">
     <div class="modal-dialog modal-lg">
@@ -16,12 +16,12 @@
   MODAL CUERPO
   ======================================-->
       <div class="modal-body">
-      <table id="datatable-contribuyente" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+      <table id="datatable-insumos" class="table table-striped table-bordered  nowrap" cellspacing="0" width="100%">
        <thead class="bg-dark" style="color: white">
           <tr>
             <th>RUC</th>
-           <th>Nombre</th>
-           <th>Seleccionar</th>
+            <th>Nombre</th>
+            <th>Seleccionar</th>
           </tr>
         </thead>
         <tbody>
@@ -30,7 +30,7 @@
               <td><?php echo $res2->num_doc ?></td>
               <td><?php echo $res2->nombre_persona ?></td>
               
-              <td  class="text-center"><a class="btn btn-success" onclick="enviacliente2('<?php echo $res2->id_persona; ?>','<?php echo $res2->num_doc; ?>','<?php echo $res2->nombre_persona; ?>','<?php echo $res2->direccion_persona; ?>');"><i class="fa fa-check"></i></a></td>
+              <td  class="text-center"><a class="btn btn-success" onclick="enviacliente2('<?php echo $res2->id_persona; ?>','<?php echo $res2->num_doc; ?>','<?php echo $res2->nombre_persona; ?>','<?php echo $res2->direccion_persona; ?>');"><i class="fe fe-check"></i></a></td>
             </tr>
           <?php } ?>
         </tbody>
@@ -42,7 +42,7 @@
   ======================================-->
       <div class="modal-footer">
            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-         </div>
+      </div>
     </div>
     </div>
   </div>

@@ -4,7 +4,7 @@ function openModalEdit()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{
@@ -23,7 +23,7 @@ function openModalDel()
 
 	var arr = [];
 
-	$('#datatable-responsive > tbody > tr').click(function()
+	$('#dataTable-1 > tbody > tr').click(function()
 		{
 			arr = $(this).find('td').map(function()
 				{

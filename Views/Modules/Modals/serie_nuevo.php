@@ -19,7 +19,7 @@
               <?php 
             while($row_tipo_doc = $resultado_tipo_doc->fetch(PDO::FETCH_ASSOC) )
        {?>
-        <option value="<?= $row_tipo_doc['id'] ?>"><?=$row_tipo_doc['nombre']?></option>;
+        <option value="<?= $row_tipo_doc['cod'].'-'.$row_tipo_doc['id'] ?>"><?=$row_tipo_doc['nombre']?></option>;
        <?php  } ?>
             </select>
           </div>
