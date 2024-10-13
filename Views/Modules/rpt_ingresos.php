@@ -5,17 +5,30 @@ $empresa = $_SESSION["id_empresa"];
 $usuariov = $_SESSION["id"];
 $boton  = 'disabled';
 
+$fecha_ini  = date('Y-m-d');
+$fecha_fin  = date('Y-m-d');
+
+$query_alm = "SELECT * FROM tbl_almacen WHERE empresa = $empresa";
+$resultado_alm=$connect->prepare($query_alm);
+$resultado_alm->execute(); 
+$num_reg_alm=$resultado_alm->rowCount();
+
 
 if(!empty($_POST))
 {
 $fecha_ini = $_POST['fecha_ini'];
 $fecha_fin = $_POST['fecha_fin'];
-
+$almacen   = $_POST['almacen'];
 $boton  = '';
 
-
-   $query_data = "SELECT * FROM vw_tbl_alm_ing WHERE fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND empresa = $empresa   ORDER BY fecha";
-
+if($almacen == '%')
+{
+   $query_data = "SELECT * FROM vw_tbl_alm_ing WHERE fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND empresa = $empresa    ORDER BY fecha";
+}
+else
+{
+  $query_data = "SELECT * FROM vw_tbl_alm_ing WHERE fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND empresa = $empresa AND local = $almacen   ORDER BY fecha";
+}
 
 
 $resultado_data=$connect->prepare($query_data);
@@ -93,6 +106,19 @@ $num_reg_data=$resultado_data->rowCount();
                                   <label for="ex4" class="col-form-label"> Fecha Fin: </label>
                                   <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="<?=$fecha_fin?>">
                                 </div>
+                                <div class="form-group mr-3 ml-3">
+                                  <label for="ex4" class="col-form-label"> Almacen: </label>
+                                  <select class="form-control select2" name="almacen" id="almacen">
+                                
+                                <option value="%">--TODOS--</option>
+                                
+                                <?php 
+                                while($row_alm = $resultado_alm->fetch(PDO::FETCH_ASSOC) )
+                                {?>
+                                <option value="<?= $row_alm['id'] ?>"><?=$row_alm['nombre']?></option>;
+                                <?php  } ?>
+                                </select>
+                                </div>
                                 
                                 
                                 <div class="form-group">
@@ -127,9 +153,9 @@ $num_reg_data=$resultado_data->rowCount();
                             <td><?=$data['tipo_movimiento']?></td>
                             <td><?=$data['tipo_doc']?></td>
                             <td><?=$data['serie_doc'].'-'.$data['num_doc']?></td>
-                            <td><?=number_format($data['cantidad'],3)?></td>
-                            <td><?=number_format($data['costo_unitario'],3)?></td>
-                            <td><?=number_format($data['cantidad']*$data['costo_unitario'],3)?></td>
+                            <td><?=number_format($data['cantidad_entrada'],3)?></td>
+                            <td><?=number_format($data['costo_unitario_entrada'],3)?></td>
+                            <td><?=number_format($data['cantidad_entrada']*$data['costo_unitario_entrada'],3)?></td>
                           </tr>
                         <?php } ?>
                       </tbody>
