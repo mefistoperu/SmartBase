@@ -5,16 +5,30 @@ $empresa = $_SESSION["id_empresa"];
 $usuariov = $_SESSION["id"];
 $boton  = 'disabled';
 
+$fecha_ini  = date('Y-m-d');
+$fecha_fin  = date('Y-m-d');
+
+$query_alm = "SELECT * FROM tbl_almacen WHERE empresa = $empresa";
+$resultado_alm=$connect->prepare($query_alm);
+$resultado_alm->execute(); 
+$num_reg_alm=$resultado_alm->rowCount();
+
 
 if(!empty($_POST))
 {
 $fecha_ini = $_POST['fecha_ini'];
 $fecha_fin = $_POST['fecha_fin'];
-
+$almacen   = $_POST['almacen'];
 $boton  = '';
 
-
-  $query_data = "SELECT * FROM vw_tbl_alm_sal WHERE fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND empresa = $empresa  ORDER BY fecha";
+if($almacen == '%')
+{
+   $query_data = "SELECT * FROM vw_tbl_alm_sal WHERE fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND empresa = $empresa    ORDER BY fecha";
+}
+else
+{
+  $query_data = "SELECT * FROM vw_tbl_alm_sal WHERE fecha BETWEEN '$fecha_ini' AND '$fecha_fin' AND empresa = $empresa AND local = $almacen   ORDER BY fecha";
+}
 
 
 $resultado_data=$connect->prepare($query_data);
@@ -60,7 +74,7 @@ $num_reg_data=$resultado_data->rowCount();
             <div class="col-12">
                <div class="row align-items-center mb-2">
                 <div class="col">
-                  <h2 class="h5 page-title">Reporte de salidas de almacen </h2>
+                  <h2 class="h5 page-title">Reporte de Salidas de almacen </h2>
                 </div>
                 <div class="col-auto">
                   <form class="form-inline">
@@ -92,6 +106,19 @@ $num_reg_data=$resultado_data->rowCount();
                                   <label for="ex4" class="col-form-label"> Fecha Fin: </label>
                                   <input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="<?=$fecha_fin?>">
                                 </div>
+                                <div class="form-group mr-3 ml-3">
+                                  <label for="ex4" class="col-form-label"> Almacen: </label>
+                                  <select class="form-control select2" name="almacen" id="almacen">
+                                
+                                <option value="%">--TODOS--</option>
+                                
+                                <?php 
+                                while($row_alm = $resultado_alm->fetch(PDO::FETCH_ASSOC) )
+                                {?>
+                                <option value="<?= $row_alm['id'] ?>"><?=$row_alm['nombre']?></option>;
+                                <?php  } ?>
+                                </select>
+                                </div>
                                 
                                 
                                 <div class="form-group">
@@ -109,7 +136,6 @@ $num_reg_data=$resultado_data->rowCount();
                           <th>Id</th>
                           <th>Producto</th>
                           <th>T/M</th>
-                          <th>Max/Min</th>
                           <th>T. Doc</th>
                           <th>Num.Doc.</th>
                           <th>Cantidad</th>
@@ -125,7 +151,6 @@ $num_reg_data=$resultado_data->rowCount();
                             <td><?=$data['codigo_producto']?></td>
                             <td><?=$data['nombre_producto']?></td>
                             <td><?=$data['tipo_movimiento']?></td>
-                            <td><?=$data['mxmn']?></td>
                             <td><?=$data['tipo_doc']?></td>
                             <td><?=$data['serie_doc'].'-'.$data['num_doc']?></td>
                             <td><?=number_format($data['cantidad_salida'],3)?></td>
