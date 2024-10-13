@@ -157,7 +157,7 @@ $num_reg_data2=$resultado_data2->rowCount();
                                     ?><?=$sf1.' '. $row1['unidad'].' / '.$su1.' '. $row1['unidadu'] ?></th>
                              <td width="10%"><?php echo $row1['precio2'] ?></td>
                             <td width="10%">
-                              <button type="button" class="btn btn-primary rounded-circle" onclick="agregar('<?=$row1['id']?>','<?php echo $row1['nombre'] ?>',<?php echo $row1['precio2'] ?>,'<?php echo $row1['afectacion'] ?>','<?php echo $row1['costo'] ?>',<?php echo $row1['factor'] ?>,'MAY','<?php echo $calculaigv?>','<?=$_SESSION["detalle"]?>','<?=$_SESSION["precio"]?>')"><i class="fe fe-plus"></i></button>
+<button type="button" class="btn btn-primary rounded-circle" onclick="agregar('<?=$row1['id']?>','<?php echo $row1['nombre'] ?>',<?php echo $row1['precio2'] ?>,'<?php echo $row1['afectacion'] ?>','<?php echo $row1['costo'] ?>',<?php echo $row1['factor'] ?>,'MAY','<?=$calculaigv?>', '<?=$_SESSION["detalle"]?>', '<?=$_SESSION["precio"]?>')"><i class="fe fe-plus"></i></button>
                             </td>
                           </tr>
                         <?php } ?>

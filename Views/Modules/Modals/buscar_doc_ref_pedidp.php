@@ -35,7 +35,7 @@
               <td><?php echo $res2->fecha_emision ?></td>
                <td><?php echo $res2->correlativo ?></td>
                <td><?php echo $res2->nombre_persona ?></td>
-              <td  class="text-center"><a class="btn btn-success" onclick="enviaclientepd('<?php echo $res2->id; ?>','<?php echo $res2->tipocomp; ?>','<?php echo $res2->nomdoc; ?>','<?php echo $res2->serie; ?>','<?php echo $res2->correlativo; ?>','<?php echo $res2->id_cliente; ?>','<?php echo $res2->num_doc; ?>','<?php echo $res2->nombre_persona; ?>','<?php echo $res2->direccion_persona; ?>','<?php echo $res2->op_gravadas; ?>','<?php echo $res2->op_exoneradas; ?>','<?php echo $res2->op_inafectas; ?>','<?php echo $res2->igv; ?>','<?php echo $res2->total; ?>');"><i class="fe fe-check"></i></a></td>
+<td  class="text-center"><a class="btn btn-success" onclick="enviaclientepd('<?php echo $res2->id; ?>','<?php echo $res2->tipocomp; ?>','<?php echo $res2->nomdoc; ?>','<?php echo $res2->serie; ?>','<?php echo $res2->correlativo; ?>','<?php echo $res2->id_cliente; ?>','<?php echo $res2->num_doc; ?>','<?php echo $res2->nombre_persona; ?>','<?php echo $res2->direccion_persona; ?>','<?php echo $res2->op_gravadas; ?>','<?php echo $res2->op_exoneradas; ?>','<?php echo $res2->op_inafectas; ?>','<?php echo $res2->igv; ?>','<?php echo $res2->total; ?>');"><i class="fe fe-check"></i></a></td>
             </tr>
           <?php } ?>
         </tbody>
